@@ -205,13 +205,14 @@ animation:none;
 opacity:0;
 }
 #cover.flash-hit .asteroid-layer,
-#cover.flash-hit .asteroid-trail,
 #cover.flash-hit .asteroid-dust,
+#cover.flash-hit .meteor-trail,
+#cover.is-clearing .meteor-trail,
 #cover.flash-hit .cover-moon,
 #cover.flash-hit .shooting-star,
 #cover.is-clearing .asteroid-layer,
-#cover.is-clearing .asteroid-trail,
 #cover.is-clearing .asteroid-dust,
+#cover.is-clearing .meteor-trail,
 #cover.is-clearing .cover-moon{
 opacity:0 !important;
 visibility:hidden !important;
@@ -228,9 +229,21 @@ filter:none !important;
 transition:opacity 0.1s ease,visibility 0.1s ease,transform 0.1s ease;
 }
 #cover.flash-hit .asteroid-img,
-#cover.is-clearing .asteroid-img{
+#cover.is-clearing .asteroid-img,
+#cover.flash-hit .meteor-body,
+#cover.is-clearing .meteor-body,
+#cover.flash-hit .meteor-trail,
+#cover.is-clearing .meteor-trail,
+#cover.flash-hit .meteor-sparks,
+#cover.is-clearing .meteor-sparks,
+#cover.flash-hit .meteor-fire-back,
+#cover.flash-hit .meteor-fire-front,
+#cover.is-clearing .meteor-fire-back,
+#cover.is-clearing .meteor-fire-front{
 box-shadow:none !important;
 filter:none !important;
+opacity:0 !important;
+visibility:hidden !important;
 }
 #cover.flash-hit .asteroid-hotspot{
 display:none !important;
@@ -387,34 +400,50 @@ opacity:0;
 #cover.open .asteroid-layer{
 opacity:1;
 }
-.asteroid-trail{
+.meteor-trail{
 position:absolute;
 left:50%;
-top:14%;
-width:min(120px,28vw);
-height:min(280px,52vh);
-transform:translate(-50%,0) scaleY(0.2);
-transform-origin:top center;
-background:linear-gradient(180deg,rgba(255,210,140,0.75) 0%,rgba(255,160,80,0.35) 28%,rgba(203,163,92,0.12) 55%,transparent 100%);
-filter:blur(8px);
+bottom:46%;
+width:42%;
+height:240%;
+transform:translateX(-50%) scaleY(0.15);
+transform-origin:bottom center;
 opacity:0;
+z-index:0;
+pointer-events:none;
+}
+.meteor-trail::before{
+content:'';
+position:absolute;
+inset:0;
 border-radius:50%;
+background:linear-gradient(to top,rgba(255,210,100,0.85) 0%,rgba(255,130,40,0.55) 22%,rgba(255,70,15,0.2) 50%,transparent 100%);
+filter:blur(5px);
 }
-#cover.open .asteroid-trail{
-animation:trailStretch 2.15s cubic-bezier(.35,0,.15,1) 0.05s forwards;
+.meteor-trail::after{
+content:'';
+position:absolute;
+left:20%;right:20%;
+bottom:0;height:18%;
+border-radius:50%;
+background:radial-gradient(ellipse at 50% 100%,rgba(255,240,180,0.8),transparent 70%);
+filter:blur(3px);
 }
-@keyframes trailStretch{
-0%{opacity:0;transform:translate(-50%,0) scaleY(0.15) scaleX(0.4);}
-18%{opacity:0.85;}
-100%{opacity:0;transform:translate(-50%,42vh) scaleY(1.35) scaleX(2.4);}
+#cover.open .meteor-trail{
+animation:trailPulse 2.15s cubic-bezier(.35,0,.15,1) 0.05s forwards;
+}
+@keyframes trailPulse{
+0%{opacity:0;transform:translateX(-50%) scaleY(0.15) scaleX(0.5);}
+20%{opacity:0.75;}
+100%{opacity:0.55;transform:translateX(-50%) scaleY(1) scaleX(1);}
 }
 .asteroid-wrap{
 position:absolute;
 left:50%;
 top:12%;
-width:min(220px,58vw);
-height:min(220px,58vw);
-transform:translate(-50%,-50%) scale(0.05) rotate(-18deg);
+width:min(190px,50vw);
+height:min(190px,50vw);
+transform:translate(-50%,-50%) scale(0.08) rotate(-18deg);
 opacity:0;
 will-change:transform,opacity;
 }
@@ -423,54 +452,86 @@ animation:asteroidApproach 2.15s cubic-bezier(.32,0,.12,1) 0.08s forwards;
 }
 @keyframes asteroidApproach{
 0%{
-transform:translate(-50%,-50%) scale(0.05) rotate(-18deg);
+transform:translate(-50%,-52%) scale(0.05) rotate(-18deg);
 opacity:0;
-filter:blur(2px) brightness(1.1);
+filter:blur(3px) brightness(1.1);
 }
-10%{
-opacity:1;
-}
+10%{opacity:1;}
 55%{
 transform:translate(-50%,18vh) scale(0.95) rotate(8deg);
-opacity:1;
-filter:blur(0) brightness(1.05);
+filter:blur(0) brightness(1.1);
 }
 78%{
-transform:translate(-50%,32vh) scale(2.1) rotate(22deg);
+transform:translate(-50%,32vh) scale(1.6) rotate(22deg);
 filter:blur(0) brightness(1.15);
 }
 100%{
-transform:translate(-50%,38vh) scale(4.6) rotate(32deg);
+transform:translate(-50%,38vh) scale(2.4) rotate(32deg);
 opacity:1;
-filter:blur(1px) brightness(1.35);
+filter:blur(0) brightness(1.2);
 }
 }
-.asteroid-img{
+.meteor-fire-back{
+position:absolute;
+inset:-18%;
+border-radius:50%;
+z-index:1;
+pointer-events:none;
+opacity:0;
+background:
+radial-gradient(circle at 50% 55%,rgba(255,140,40,0.28) 0%,rgba(255,70,10,0.14) 40%,transparent 68%);
+filter:blur(8px);
+}
+#cover.open .meteor-fire-back{
+animation:fireGrow 2.15s ease 0.1s forwards,firePulse 0.42s ease-in-out 0.5s infinite alternate;
+}
+.meteor-fire-front{
+position:absolute;
+inset:-6%;
+z-index:2;
+pointer-events:none;
+opacity:0;
+background:
+radial-gradient(circle at 50% 60%,transparent 0%,transparent 42%,rgba(255,180,70,0.35) 50%,transparent 64%);
+filter:blur(4px);
+}
+#cover.open .meteor-fire-front{
+animation:fireGrow 2.15s ease 0.15s forwards,flameFlicker 0.32s ease-in-out 0.5s infinite alternate;
+}
+@keyframes fireGrow{
+0%{opacity:0;transform:scale(0.4);}
+35%{opacity:0.35;}
+70%{opacity:0.55;transform:scale(1.02);}
+100%{opacity:0.65;transform:scale(1.08);}
+}
+@keyframes firePulse{
+0%{filter:blur(6px);transform:scale(0.97);}
+100%{filter:blur(10px);transform:scale(1.03);}
+}
+@keyframes flameFlicker{
+0%{opacity:0.45;transform:scale(0.98);}
+100%{opacity:0.7;transform:scale(1.02);}
+}
+.meteor-body{
+position:relative;
+z-index:4;
 width:100%;
 height:100%;
-object-fit:cover;
-border-radius:44% 56% 52% 48%;
-box-shadow:
-0 0 50px rgba(255,180,90,0.35),
-0 0 120px rgba(255,140,60,0.2),
-inset -18px -22px 40px rgba(0,0,0,0.55),
-inset 12px 14px 30px rgba(255,220,180,0.12);
-filter:contrast(1.12) saturate(0.95);
+display:block;
+filter:drop-shadow(0 0 14px rgba(255,120,30,0.4)) drop-shadow(0 8px 18px rgba(0,0,0,0.65));
 }
-.asteroid-hotspot{
+.meteor-body path.rock-main{
+stroke:#1e1a17;
+stroke-width:1.5;
+stroke-linejoin:round;
+}
+.meteor-sparks{
 position:absolute;
-top:18%;
-left:22%;
-width:38%;
-height:38%;
-border-radius:50%;
-background:radial-gradient(circle,rgba(255,230,170,0.55) 0%,rgba(255,180,80,0.2) 45%,transparent 72%);
-mix-blend-mode:screen;
-animation:hotspotPulse 0.35s ease-in-out infinite alternate;
-}
-@keyframes hotspotPulse{
-0%{opacity:0.55;transform:scale(0.92);}
-100%{opacity:1;transform:scale(1.08);}
+inset:0;
+z-index:5;
+width:100%;
+height:100%;
+pointer-events:none;
 }
 .asteroid-dust{
 position:absolute;
@@ -592,39 +653,105 @@ font-style:italic;
 }
 .scroll-hint{
 position:absolute;
-bottom:calc(84px + env(safe-area-inset-bottom,0px));
+bottom:calc(88px + env(safe-area-inset-bottom,0px));
 left:50%;
 transform:translateX(-50%);
 z-index:3;
 display:flex;
 flex-direction:column;
 align-items:center;
+gap:10px;
+text-decoration:none;
+}
+.scroll-hint.reveal{
+transform:translateX(-50%) translateY(32px);
+}
+.scroll-hint.reveal.active{
+transform:translateX(-50%) translateY(0);
+}
+.scroll-hint.reveal.active .scroll-icon{
+animation:scrollFloat 3s ease-in-out infinite;
+}
+@keyframes scrollFloat{
+0%,100%{transform:translateY(0);}
+50%{transform:translateY(6px);}
+}
+.scroll-icon{
+display:flex;
+flex-direction:column;
+align-items:center;
 gap:6px;
 }
-.scroll-hint span{
-width:1px;height:38px;
-background:linear-gradient(180deg,var(--gold),transparent);
+.scroll-ring{
+width:26px;
+height:42px;
+border:1.5px solid rgba(203,163,92,0.55);
+border-radius:14px;
 position:relative;
-overflow:hidden;
+box-shadow:0 0 12px rgba(203,163,92,0.15),inset 0 0 8px rgba(203,163,92,0.06);
 }
-.scroll-hint span::after{
+.scroll-ring::before{
 content:'';
 position:absolute;
-top:-100%;left:0;right:0;
-height:60%;
-background:var(--rose);
-animation:scrollLine 2.2s ease-in-out infinite;
+top:6px;left:50%;
+width:3px;height:3px;
+border-radius:50%;
+transform:translateX(-50%);
+background:var(--gold-soft);
+box-shadow:0 0 6px rgba(228,207,160,0.8);
+animation:starTwinkleScroll 2s ease-in-out infinite;
 }
-@keyframes scrollLine{
-0%{top:-60%;}
-100%{top:100%;}
+@keyframes starTwinkleScroll{
+0%,100%{opacity:0.4;transform:translateX(-50%) scale(0.8);}
+50%{opacity:1;transform:translateX(-50%) scale(1.2);}
+}
+.scroll-wheel{
+position:absolute;
+top:10px;left:50%;
+width:3px;height:8px;
+margin-left:-1.5px;
+border-radius:2px;
+background:linear-gradient(180deg,var(--gold-soft),var(--rose));
+animation:scrollWheelDrop 2s cubic-bezier(.4,0,.2,1) infinite;
+}
+@keyframes scrollWheelDrop{
+0%{opacity:0;transform:translateY(0);}
+15%{opacity:1;}
+85%{opacity:0.3;}
+100%{opacity:0;transform:translateY(14px);}
+}
+.scroll-chevrons{
+display:flex;
+flex-direction:column;
+align-items:center;
+gap:2px;
+margin-top:2px;
+}
+.scroll-chevrons span{
+display:block;
+width:8px;height:8px;
+border-right:1.5px solid var(--gold-soft);
+border-bottom:1.5px solid var(--gold-soft);
+transform:rotate(45deg);
+opacity:0.35;
+animation:chevronBounce 2s ease-in-out infinite;
+}
+.scroll-chevrons span:nth-child(2){
+width:6px;height:6px;
+opacity:0.2;
+animation-delay:0.2s;
+}
+@keyframes chevronBounce{
+0%,100%{opacity:0.2;transform:rotate(45deg) translateY(0);}
+50%{opacity:0.75;transform:rotate(45deg) translateY(3px);}
 }
 .scroll-hint p{
 font-family:'Jost',sans-serif;
-font-size:0.58rem;
-letter-spacing:2px;
+font-size:0.56rem;
+letter-spacing:3.5px;
 text-transform:uppercase;
-color:var(--text-soft);
+color:rgba(228,207,160,0.7);
+margin-top:2px;
 }
 #couple{background:transparent;}
 .couple-intro{
@@ -827,43 +954,122 @@ font-size:1rem;
 color:var(--text-soft);
 line-height:1.6;
 }
-#gallery{background:transparent;}
+#gallery{background:transparent;padding-bottom:100px;}
 .gallery-lead{
 font-size:0.98rem;
 font-style:italic;
 color:var(--text-soft);
 max-width:280px;
-margin:8px auto 30px;
+margin:8px auto 28px;
 line-height:1.65;
 position:relative;
 z-index:1;
 }
-.gallery-grid{
-display:grid;
-grid-template-columns:repeat(3,1fr);
-gap:8px;
+.gallery-panel{
 position:relative;
 z-index:1;
+max-width:360px;
+margin:0 auto;
+padding:14px;
+border:1px solid rgba(203,163,92,0.22);
+border-radius:16px;
+background:rgba(27,36,64,0.42);
+backdrop-filter:blur(12px);
+-webkit-backdrop-filter:blur(12px);
+box-shadow:0 16px 40px rgba(0,0,0,0.28),inset 0 1px 0 rgba(228,207,160,0.06);
+}
+.gallery-panel::before{
+content:'';
+position:absolute;
+inset:8px;
+border:1px solid rgba(203,163,92,0.1);
+border-radius:12px;
+pointer-events:none;
+}
+.gallery-masonry{
+display:grid;
+grid-template-columns:repeat(2,1fr);
+gap:10px;
+position:relative;
 }
 .gal-item{
 position:relative;
+aspect-ratio:1;
+min-height:0;
+padding:0;
 overflow:hidden;
-border-radius:8px;
-aspect-ratio:3/4;
+border-radius:10px;
 cursor:pointer;
-border:1px solid rgba(203,163,92,0.35);
+border:1px solid rgba(203,163,92,0.3);
+background:rgba(15,21,38,0.5);
+box-shadow:0 6px 20px rgba(0,0,0,0.22);
+opacity:0;
+transform:translateY(18px) scale(0.96);
+transition:opacity 0.65s cubic-bezier(.2,.8,.2,1),transform 0.65s cubic-bezier(.2,.8,.2,1),box-shadow 0.35s ease,border-color 0.35s ease;
 }
-.gal-item.wide{
-grid-column:span 2;
-aspect-ratio:2/1.3;
+.gallery-panel.reveal.active .gal-item{
+opacity:1;
+transform:translateY(0) scale(1);
+}
+.gallery-panel.reveal.active .gal-item:nth-child(1){transition-delay:0.06s;}
+.gallery-panel.reveal.active .gal-item:nth-child(2){transition-delay:0.12s;}
+.gallery-panel.reveal.active .gal-item:nth-child(3){transition-delay:0.18s;}
+.gallery-panel.reveal.active .gal-item:nth-child(4){transition-delay:0.24s;}
+.gallery-panel.reveal.active .gal-item:nth-child(5){transition-delay:0.3s;}
+.gallery-panel.reveal.active .gal-item:nth-child(6){transition-delay:0.36s;}
+.gal-item.gal-feature{
+grid-column:1/-1;
+aspect-ratio:4/3;
+}
+.gal-item.gal-wide{
+grid-column:1/-1;
+aspect-ratio:16/9;
 }
 .gal-item img{
-width:100%;height:100%;
+width:100%;
+height:100%;
 object-fit:cover;
 display:block;
-transition:transform 0.5s ease;
+transition:transform 0.55s cubic-bezier(.2,.8,.2,1),filter 0.4s ease;
 }
-.gal-item:hover img{transform:scale(1.05);}
+.gal-item::after{
+content:'';
+position:absolute;
+inset:0;
+background:linear-gradient(165deg,rgba(15,21,38,0.05) 0%,transparent 45%,rgba(15,21,38,0.5) 100%);
+opacity:0.55;
+transition:opacity 0.35s ease;
+pointer-events:none;
+}
+.gal-item:hover{
+border-color:rgba(203,163,92,0.55);
+box-shadow:0 12px 32px rgba(0,0,0,0.35),0 0 20px rgba(203,163,92,0.12);
+}
+.gal-item:hover::after{opacity:0.85;}
+.gal-item:hover img{transform:scale(1.07);filter:brightness(1.05);}
+.gal-zoom{
+position:absolute;
+bottom:10px;
+right:10px;
+z-index:2;
+width:30px;height:30px;
+border-radius:50%;
+background:rgba(15,21,38,0.65);
+border:1px solid rgba(203,163,92,0.45);
+color:var(--gold-soft);
+display:flex;
+align-items:center;
+justify-content:center;
+opacity:0;
+transform:scale(0.75);
+transition:opacity 0.3s ease,transform 0.3s ease;
+pointer-events:none;
+}
+.gal-zoom svg{width:14px;height:14px;}
+.gal-item:hover .gal-zoom{
+opacity:1;
+transform:scale(1);
+}
 .gal-lightbox{
 position:fixed;
 inset:0;
@@ -903,24 +1109,71 @@ display:flex;align-items:center;justify-content:center;
 #gift{
 position:relative;
 overflow:hidden;
-background:linear-gradient(180deg,rgba(15,21,38,0.4),rgba(15,21,38,0.7) 55%,rgba(15,21,38,0.4));
+padding-bottom:100px;
+background:linear-gradient(180deg,rgba(15,21,38,0.2),rgba(15,21,38,0.55) 50%,rgba(15,21,38,0.2));
 color:var(--gold-soft);
 }
 #gift .eyebrow{color:var(--gold);}
 #gift h2{color:var(--cream);}
+.gift-deco{
+position:absolute;
+inset:0;
+pointer-events:none;
+z-index:0;
+}
+.gift-sparkle{
+position:absolute;
+width:3px;height:3px;
+border-radius:50%;
+background:var(--gold-soft);
+box-shadow:0 0 6px rgba(228,207,160,0.8);
+opacity:0;
+animation:giftSparkle 4.5s ease-in-out infinite;
+}
+.gift-sparkle:nth-child(1){left:12%;top:14%;animation-delay:0s;}
+.gift-sparkle:nth-child(2){left:86%;top:10%;animation-delay:1.1s;width:2px;height:2px;}
+.gift-sparkle:nth-child(3){left:8%;top:62%;animation-delay:2.2s;width:2px;height:2px;}
+.gift-sparkle:nth-child(4){left:90%;top:70%;animation-delay:3.3s;}
+.gift-sparkle:nth-child(5){left:50%;top:88%;animation-delay:1.8s;width:2px;height:2px;}
+@keyframes giftSparkle{
+0%,100%{opacity:0;transform:scale(0.5);}
+45%{opacity:0.85;transform:scale(1);}
+55%{opacity:0.4;}
+}
+.gift-panel{
+position:relative;
+z-index:2;
+max-width:360px;
+margin:0 auto;
+padding:28px 22px 26px;
+border:1px solid rgba(203,163,92,0.22);
+border-radius:16px;
+background:rgba(27,36,64,0.45);
+backdrop-filter:blur(12px);
+-webkit-backdrop-filter:blur(12px);
+box-shadow:0 16px 40px rgba(0,0,0,0.28),inset 0 1px 0 rgba(228,207,160,0.06);
+}
+.gift-panel::before{
+content:'';
+position:absolute;
+inset:8px;
+border:1px solid rgba(203,163,92,0.1);
+border-radius:12px;
+pointer-events:none;
+}
 .gift-lead{
 font-size:1.02rem;
-color:var(--gold-soft);
+color:var(--text-soft);
 max-width:300px;
-margin:12px auto 26px;
-line-height:1.7;
+margin:0 auto 24px;
+line-height:1.75;
 font-style:italic;
 position:relative;
 z-index:1;
 }
 .gift-icon-wrap{
-width:56px;height:56px;
-margin:0 auto 18px;
+width:68px;height:68px;
+margin:0 auto 20px;
 position:relative;
 display:flex;
 align-items:center;
@@ -931,78 +1184,163 @@ z-index:1;
 position:absolute;
 inset:0;
 border-radius:50%;
-border:1px solid rgba(228,207,160,0.4);
+border:1px solid rgba(203,163,92,0.4);
 animation:ringPulse 3s ease-in-out infinite;
 }
-@keyframes ringPulse{
-0%,100%{transform:scale(1);opacity:0.7;}
-50%{transform:scale(1.1);opacity:1;}
+.gift-icon-ring::after{
+content:'';
+position:absolute;
+inset:6px;
+border-radius:50%;
+border:1px solid rgba(203,163,92,0.15);
 }
-.gift-icon svg{width:28px;height:28px;color:var(--gold-soft);}
+@keyframes ringPulse{
+0%,100%{transform:scale(1);opacity:0.65;}
+50%{transform:scale(1.08);opacity:1;}
+}
+.gift-icon{
+width:32px;height:32px;
+display:flex;
+align-items:center;
+justify-content:center;
+}
+.gift-icon svg{width:100%;height:100%;color:var(--gold-soft);filter:drop-shadow(0 0 8px rgba(228,207,160,0.35));}
 .gift-toggle{
-padding:14px 34px;
-border:1px solid var(--gold-soft);
+display:inline-flex;
+align-items:center;
+justify-content:center;
+gap:8px;
+padding:14px 30px;
+border:1px solid rgba(203,163,92,0.45);
 border-radius:999px;
 color:var(--cream);
 font-family:'Jost',sans-serif;
 font-size:0.68rem;
 letter-spacing:2px;
 text-transform:uppercase;
-transition:all 0.3s ease;
+background:rgba(203,163,92,0.08);
+transition:background 0.35s ease,color 0.35s ease,border-color 0.35s ease,box-shadow 0.35s ease;
 position:relative;
 z-index:1;
 }
-.gift-toggle:hover{background:var(--gold-soft);color:var(--night-deep);}
+.gift-toggle svg{
+width:14px;height:14px;
+transition:transform 0.35s ease;
+flex-shrink:0;
+}
+.gift-toggle.open svg{transform:rotate(180deg);}
+.gift-toggle:hover{
+background:rgba(203,163,92,0.2);
+border-color:var(--gold-soft);
+box-shadow:0 0 20px rgba(203,163,92,0.15);
+}
 .bank-list{
 max-height:0;
 overflow:hidden;
-transition:max-height 0.6s ease;
+transition:max-height 0.55s cubic-bezier(.4,0,.2,1);
 position:relative;
 z-index:1;
 }
-.bank-list.open{max-height:500px;margin-top:24px;}
+.bank-list.open{max-height:520px;margin-top:22px;}
 .bank-card{
-background:rgba(247,241,228,0.06);
-border:1px solid rgba(228,207,160,0.28);
-border-radius:10px;
-padding:20px 18px;
-margin-bottom:14px;
+position:relative;
+background:rgba(15,21,38,0.55);
+border:1px solid rgba(203,163,92,0.28);
+border-radius:12px;
+padding:18px 16px 16px 20px;
+margin-bottom:12px;
 text-align:left;
+overflow:hidden;
+opacity:0;
+transform:translateY(14px);
+transition:opacity 0.45s ease,transform 0.45s ease,box-shadow 0.3s ease,border-color 0.3s ease;
+}
+.bank-card::before{
+content:'';
+position:absolute;
+left:0;top:0;bottom:0;
+width:3px;
+background:linear-gradient(180deg,var(--gold-soft),var(--rose));
+border-radius:3px 0 0 3px;
+}
+.bank-list.open .bank-card{
+opacity:1;
+transform:translateY(0);
+}
+.bank-list.open .bank-card:nth-child(1){transition-delay:0.08s;}
+.bank-list.open .bank-card:nth-child(2){transition-delay:0.16s;}
+.bank-card:last-child{margin-bottom:0;}
+.bank-card:hover{
+border-color:rgba(203,163,92,0.45);
+box-shadow:0 8px 24px rgba(0,0,0,0.22);
+}
+.bank-card-head{
+display:flex;
+align-items:center;
+gap:12px;
+margin-bottom:10px;
+}
+.bank-badge{
+width:36px;height:36px;
+border-radius:8px;
+background:rgba(203,163,92,0.12);
+border:1px solid rgba(203,163,92,0.3);
+display:flex;
+align-items:center;
+justify-content:center;
+font-family:'Cinzel',serif;
+font-size:0.62rem;
+font-weight:600;
+color:var(--gold-soft);
+letter-spacing:0.5px;
+flex-shrink:0;
 }
 .bank-card .bank-name{
 font-family:'Jost',sans-serif;
 font-size:0.66rem;
 letter-spacing:2px;
 text-transform:uppercase;
-color:var(--gold-soft);
+color:var(--gold);
 }
 .bank-card .acc-name{
 font-family:'EB Garamond',serif;
 font-style:italic;
-font-size:1.1rem;
-margin:6px 0 10px;
+font-size:1.05rem;
+margin:0 0 12px;
 color:var(--cream);
+line-height:1.4;
 }
 .bank-card .acc-row{
 display:flex;
 justify-content:space-between;
 align-items:center;
+gap:10px;
+padding-top:12px;
+border-top:1px solid rgba(203,163,92,0.15);
 }
 .bank-card .acc-num{
 font-family:'Jost',sans-serif;
-font-size:1rem;
-letter-spacing:1px;
-color:var(--cream);
+font-size:0.95rem;
+letter-spacing:1.5px;
+color:var(--gold-soft);
 }
 .copy-btn{
-background:var(--gold-soft);
-color:var(--night-deep);
-padding:7px 16px;
+background:transparent;
+color:var(--gold-soft);
+padding:8px 14px;
 border-radius:999px;
+border:1px solid rgba(203,163,92,0.4);
 font-family:'Jost',sans-serif;
-font-size:0.62rem;
+font-size:0.6rem;
 letter-spacing:1px;
 text-transform:uppercase;
+transition:background 0.3s ease,color 0.3s ease,border-color 0.3s ease;
+flex-shrink:0;
+}
+.copy-btn:hover{
+background:var(--gold-soft);
+color:var(--night-deep);
+border-color:var(--gold-soft);
 }
 #rsvp{background:transparent;}
 .form-field{margin-bottom:18px;text-align:left;position:relative;z-index:1;}
@@ -1241,10 +1579,41 @@ body.music-ready .music-btn{opacity:1;visibility:visible;pointer-events:auto;}
 </div>
 <div class="asteroid-dust" aria-hidden="true"></div>
 <div class="asteroid-layer" aria-hidden="true">
-<div class="asteroid-trail"></div>
 <div class="asteroid-wrap">
-<img class="asteroid-img" src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/4f/BennuAsteroid.jpg/960px-BennuAsteroid.jpg" alt="" draggable="false">
-<div class="asteroid-hotspot"></div>
+<div class="meteor-trail" aria-hidden="true"></div>
+<div class="meteor-fire-back" aria-hidden="true"></div>
+<svg class="meteor-body" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+<defs>
+<radialGradient id="rockCore" cx="36%" cy="30%" r="70%">
+<stop offset="0%" stop-color="#d4c8b8"/>
+<stop offset="40%" stop-color="#9a8b7c"/>
+<stop offset="100%" stop-color="#4a4038"/>
+</radialGradient>
+<radialGradient id="rockLit" cx="28%" cy="22%" r="45%">
+<stop offset="0%" stop-color="#f0e8dc" stop-opacity="0.95"/>
+<stop offset="100%" stop-color="#f0e8dc" stop-opacity="0"/>
+</radialGradient>
+<radialGradient id="rockHot" cx="50%" cy="85%" r="40%">
+<stop offset="0%" stop-color="#ff9040" stop-opacity="0.75"/>
+<stop offset="100%" stop-color="#ff9040" stop-opacity="0"/>
+</radialGradient>
+<filter id="rockShadow" x="-20%" y="-20%" width="140%" height="140%">
+<feDropShadow dx="0" dy="5" stdDeviation="5" flood-color="#000" flood-opacity="0.55"/>
+</filter>
+</defs>
+<g filter="url(#rockShadow)">
+<path class="rock-main" d="M104 26 C142 30 172 56 166 94 C160 134 130 166 94 172 C56 178 26 150 30 108 C34 64 64 22 104 26 Z" fill="url(#rockCore)"/>
+<ellipse cx="120" cy="70" rx="15" ry="10" fill="#3a322c" opacity="0.55" transform="rotate(-12 120 70)"/>
+<ellipse cx="70" cy="116" rx="19" ry="13" fill="#322b25" opacity="0.5" transform="rotate(18 70 116)"/>
+<ellipse cx="134" cy="126" rx="10" ry="7" fill="#3d3530" opacity="0.45"/>
+<ellipse cx="86" cy="56" rx="8" ry="5" fill="#4a423c" opacity="0.42"/>
+<ellipse cx="108" cy="142" rx="12" ry="8" fill="#2e2824" opacity="0.4" transform="rotate(-8 108 142)"/>
+<path d="M104 26 C142 30 172 56 166 94 C160 134 130 166 94 172 C56 178 26 150 30 108 C34 64 64 22 104 26 Z" fill="url(#rockLit)"/>
+<path d="M60 148 C78 162 108 170 134 158 C120 172 92 178 68 168 C52 160 48 152 60 148 Z" fill="url(#rockHot)"/>
+</g>
+</svg>
+<div class="meteor-fire-front" aria-hidden="true"></div>
+<canvas class="meteor-sparks" id="meteorSparks" width="400" height="400" aria-hidden="true"></canvas>
 </div>
 </div>
 <div class="cover-gate">
@@ -1281,8 +1650,11 @@ body.music-ready .music-btn{opacity:1;visibility:visible;pointer-events:auto;}
 <p class="hero-date reveal stagger-3">MINGGU &middot; 8 NOVEMBER 2026</p>
 <p class="hero-invite reveal stagger-4">Dengan memohon rahmat dan ridho Allah SWT, kami bermaksud menyelenggarakan pernikahan dan mengharap kehadiran Bapak/Ibu/Saudara/i.</p>
 </div>
-<a href="#couple" class="scroll-hint reveal stagger-4">
-<span></span>
+<a href="#couple" class="scroll-hint reveal stagger-4" aria-label="Gulir ke bawah">
+<div class="scroll-icon" aria-hidden="true">
+<div class="scroll-ring"><span class="scroll-wheel"></span></div>
+<div class="scroll-chevrons"><span></span><span></span></div>
+</div>
 <p>Gulir</p>
 </a>
 </section>
@@ -1423,13 +1795,33 @@ body.music-ready .music-btn{opacity:1;visibility:visible;pointer-events:auto;}
 </div>
 <p class="constellation-label">Rasi Lyra &middot; Sang Harpa</p>
 <p class="gallery-lead reveal">Kenangan indah yang telah kami lalui bersama</p>
-<div class="gallery-grid reveal">
-<button type="button" class="gal-item wide" data-gal="0"><img src="https://images.unsplash.com/photo-1583939003579-730e3918a45a?w=600&q=80" alt=""></button>
-<button type="button" class="gal-item" data-gal="1"><img src="https://images.unsplash.com/photo-1519741497674-611481863552?w=600&q=80" alt=""></button>
-<button type="button" class="gal-item" data-gal="2"><img src="https://images.unsplash.com/photo-1606216794074-735e91aa2c92?w=600&q=80" alt=""></button>
-<button type="button" class="gal-item" data-gal="3"><img src="https://images.unsplash.com/photo-1465495976277-4387d4b0b4c6?w=600&q=80" alt=""></button>
-<button type="button" class="gal-item" data-gal="4"><img src="https://images.unsplash.com/photo-1511285560929-80b456fea0bc?w=600&q=80" alt=""></button>
-<button type="button" class="gal-item" data-gal="5"><img src="https://images.unsplash.com/photo-1519225421980-715cb0215aed?w=600&q=80" alt=""></button>
+<div class="gallery-panel reveal">
+<div class="gallery-masonry">
+<button type="button" class="gal-item gal-feature" data-gal="0" aria-label="Lihat foto 1">
+<img src="https://images.unsplash.com/photo-1583939003579-730e3918a45a?w=700&q=80" alt="">
+<span class="gal-zoom" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="10" cy="10" r="6"/><path d="M14.5 14.5L20 20"/><path d="M10 7v6M7 10h6"/></svg></span>
+</button>
+<button type="button" class="gal-item" data-gal="1" aria-label="Lihat foto 2">
+<img src="https://images.unsplash.com/photo-1519741497674-611481863552?w=600&q=80" alt="">
+<span class="gal-zoom" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="10" cy="10" r="6"/><path d="M14.5 14.5L20 20"/><path d="M10 7v6M7 10h6"/></svg></span>
+</button>
+<button type="button" class="gal-item" data-gal="2" aria-label="Lihat foto 3">
+<img src="https://images.unsplash.com/photo-1606216794074-735e91aa2c92?w=600&q=80" alt="">
+<span class="gal-zoom" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="10" cy="10" r="6"/><path d="M14.5 14.5L20 20"/><path d="M10 7v6M7 10h6"/></svg></span>
+</button>
+<button type="button" class="gal-item" data-gal="3" aria-label="Lihat foto 4">
+<img src="https://images.unsplash.com/photo-1465495976277-4387d4b0b4c6?w=600&q=80" alt="">
+<span class="gal-zoom" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="10" cy="10" r="6"/><path d="M14.5 14.5L20 20"/><path d="M10 7v6M7 10h6"/></svg></span>
+</button>
+<button type="button" class="gal-item" data-gal="4" aria-label="Lihat foto 5">
+<img src="https://images.unsplash.com/photo-1519225421980-715cb0215aed?w=600&q=80" alt="">
+<span class="gal-zoom" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="10" cy="10" r="6"/><path d="M14.5 14.5L20 20"/><path d="M10 7v6M7 10h6"/></svg></span>
+</button>
+<button type="button" class="gal-item gal-wide" data-gal="5" aria-label="Lihat foto 6">
+<img src="https://images.unsplash.com/photo-1511285560929-80b456fea0bc?w=700&q=80" alt="">
+<span class="gal-zoom" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="10" cy="10" r="6"/><path d="M14.5 14.5L20 20"/><path d="M10 7v6M7 10h6"/></svg></span>
+</button>
+</div>
 </div>
 </section>
 
@@ -1447,8 +1839,15 @@ body.music-ready .music-btn{opacity:1;visibility:visible;pointer-events:auto;}
 </svg>
 </div>
 <p class="constellation-label">Rasi Corona Borealis &middot; Mahkota Utara</p>
-<div class="reveal">
-<div class="gift-icon-wrap">
+<div class="gift-deco" aria-hidden="true">
+<span class="gift-sparkle"></span>
+<span class="gift-sparkle"></span>
+<span class="gift-sparkle"></span>
+<span class="gift-sparkle"></span>
+<span class="gift-sparkle"></span>
+</div>
+<div class="gift-panel reveal">
+<div class="gift-icon-wrap" aria-hidden="true">
 <span class="gift-icon-ring"></span>
 <div class="gift-icon">
 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3">
@@ -1458,10 +1857,16 @@ body.music-ready .music-btn{opacity:1;visibility:visible;pointer-events:auto;}
 </div>
 </div>
 <p class="gift-lead">Doa restu Anda merupakan karunia yang sangat berarti bagi kami. Namun jika berkenan memberi tanda kasih, dapat melalui rekening berikut.</p>
-<button type="button" class="gift-toggle" id="giftToggle">Lihat Rekening</button>
+<button type="button" class="gift-toggle" id="giftToggle">
+<span>Lihat Rekening</span>
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+</button>
 <div class="bank-list" id="bankList">
 <div class="bank-card">
-<div class="bank-name">BCA</div>
+<div class="bank-card-head">
+<div class="bank-badge">BCA</div>
+<div class="bank-name">Bank Central Asia</div>
+</div>
 <div class="acc-name">a.n. Kanaya Ardhita Wibowo</div>
 <div class="acc-row">
 <span class="acc-num" id="accBca">4520117788</span>
@@ -1469,7 +1874,10 @@ body.music-ready .music-btn{opacity:1;visibility:visible;pointer-events:auto;}
 </div>
 </div>
 <div class="bank-card">
-<div class="bank-name">Mandiri</div>
+<div class="bank-card-head">
+<div class="bank-badge">MDR</div>
+<div class="bank-name">Bank Mandiri</div>
+</div>
 <div class="acc-name">a.n. Alvaro Kusuma Bramantyo</div>
 <div class="acc-row">
 <span class="acc-num" id="accMandiri">1330099211</span>
@@ -1705,8 +2113,12 @@ document.body.classList.add('cover-locked');
 document.getElementById('btnOpen').addEventListener('click',function(){
 if(cover.classList.contains('open')) return;
 cover.classList.add('open');
+startMeteorScene();
 window.setTimeout(function(){ cover.classList.add('letter-out'); },680);
-window.setTimeout(function(){ cover.classList.add('flash-hit'); },1380);
+window.setTimeout(function(){
+cover.classList.add('flash-hit');
+stopMeteorScene();
+},1380);
 window.setTimeout(function(){
 cover.classList.add('is-clearing');
 document.documentElement.classList.remove('cover-locked');
@@ -1718,12 +2130,85 @@ window.setTimeout(function(){ el.classList.add('active'); },i*55);
 },1850);
 window.setTimeout(function(){
 cover.classList.add('revealed');
+stopMeteorScene();
 document.body.classList.add('music-ready');
 startMusic();
 startFireflies();
 buildSiteStars();
 },2450);
 });
+
+(function initMeteorScene(){
+const sparkCanvas=document.getElementById('meteorSparks');
+if(!sparkCanvas) return;
+const sCtx=sparkCanvas.getContext('2d',{alpha:true});
+const SIZE=400;
+let rafId=null,t0=0,active=false,last=0,sparks=[];
+
+function spawnSpark(intensity){
+if(Math.random()>0.35+intensity*0.2) return;
+const angle=Math.random()*Math.PI*2;
+const dist=0.35+Math.random()*0.45;
+sparks.push({
+x:Math.cos(angle)*dist,y:Math.sin(angle)*dist,
+vx:(Math.random()-0.5)*0.018,vy:-0.02-Math.random()*0.04,
+life:0.5+Math.random()*0.5,
+size:1.5+Math.random()*3*intensity,
+hue:20+Math.random()*35
+});
+if(sparks.length>120) sparks.shift();
+}
+
+function renderSparks(intensity){
+sCtx.clearRect(0,0,SIZE,SIZE);
+const cx=SIZE/2,cy=SIZE/2;
+sparks.forEach(function(s){
+s.x+=s.vx;s.y+=s.vy;s.life-=0.022;
+if(s.life<=0) return;
+const a=s.life*intensity;
+const px=cx+s.x*SIZE*0.45,py=cy+s.y*SIZE*0.45;
+const g=sCtx.createRadialGradient(px,py,0,px,py,s.size*3);
+g.addColorStop(0,'hsla('+s.hue+',100%,75%,'+a+')');
+g.addColorStop(0.4,'hsla('+s.hue+',100%,55%,'+(a*0.6)+')');
+g.addColorStop(1,'hsla('+s.hue+',100%,40%,0)');
+sCtx.fillStyle=g;
+sCtx.beginPath();
+sCtx.arc(px,py,s.size*3,0,Math.PI*2);
+sCtx.fill();
+});
+sparks=sparks.filter(function(s){return s.life>0;});
+}
+
+function tick(ts){
+if(!active) return;
+if(!t0) t0=ts;
+if(ts-last<36){rafId=requestAnimationFrame(tick);return;}
+last=ts;
+const prog=Math.min(1,(ts-t0)/2150);
+if(prog>=0.92){active=false;return;}
+const heat=1-Math.pow(1-prog,2.45);
+for(let i=0;i<3+heat*5;i++) spawnSpark(heat);
+renderSparks(0.5+heat*0.5);
+rafId=requestAnimationFrame(tick);
+}
+
+window.startMeteorScene=function(){
+if(active) return;
+active=true;t0=0;last=0;sparks=[];
+const dpr=Math.min(window.devicePixelRatio||1,1.75);
+sparkCanvas.width=Math.round(SIZE*dpr);
+sparkCanvas.height=Math.round(SIZE*dpr);
+sCtx.setTransform(dpr,0,0,dpr,0,0);
+if(rafId) cancelAnimationFrame(rafId);
+rafId=requestAnimationFrame(tick);
+};
+window.stopMeteorScene=function(){
+active=false;
+if(rafId){cancelAnimationFrame(rafId);rafId=null;}
+sCtx.clearRect(0,0,SIZE,SIZE);
+sparks=[];
+};
+})();
 
 musicBtn.addEventListener('click',function(){
 if(song.paused){ startMusic(); }
@@ -1766,12 +2251,12 @@ document.getElementById('btnAddCalendar').addEventListener('click',openGoogleCal
 document.getElementById('btnShareWa').addEventListener('click',shareWhatsApp);
 
 const galleryItems = [
-{src:'https://images.unsplash.com/photo-1583939003579-730e3918a45a?w=800&q=80'},
+{src:'https://images.unsplash.com/photo-1583939003579-730e3918a45a?w=900&q=80'},
 {src:'https://images.unsplash.com/photo-1519741497674-611481863552?w=800&q=80'},
 {src:'https://images.unsplash.com/photo-1606216794074-735e91aa2c92?w=800&q=80'},
 {src:'https://images.unsplash.com/photo-1465495976277-4387d4b0b4c6?w=800&q=80'},
-{src:'https://images.unsplash.com/photo-1511285560929-80b456fea0bc?w=800&q=80'},
-{src:'https://images.unsplash.com/photo-1519225421980-715cb0215aed?w=800&q=80'}
+{src:'https://images.unsplash.com/photo-1519225421980-715cb0215aed?w=800&q=80'},
+{src:'https://images.unsplash.com/photo-1511285560929-80b456fea0bc?w=900&q=80'}
 ];
 
 (function initGallery(){
@@ -1804,8 +2289,9 @@ if(e.key==='ArrowLeft'){ currentIdx=(currentIdx-1+galleryItems.length)%galleryIt
 
 document.getElementById('giftToggle').addEventListener('click',function(){
 const list = document.getElementById('bankList');
-list.classList.toggle('open');
-this.textContent = list.classList.contains('open') ? 'Sembunyikan Rekening' : 'Lihat Rekening';
+const open = list.classList.toggle('open');
+this.classList.toggle('open',open);
+this.querySelector('span').textContent = open ? 'Sembunyikan Rekening' : 'Lihat Rekening';
 });
 
 document.querySelectorAll('.copy-btn').forEach(function(btn){
