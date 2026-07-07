@@ -112,6 +112,9 @@ opacity:0;
 transition:opacity 0.5s ease 1.1s;
 }
 .constellation.active circle{opacity:1;}
+.reveal.active .constellation path{stroke-dashoffset:0;}
+.reveal.active .constellation circle{opacity:1;}
+.reveal.active .flourish path{stroke-dashoffset:0;}
 .constellation-label{
 font-family:'Jost',sans-serif;
 font-size:0.56rem;
@@ -120,6 +123,53 @@ text-transform:uppercase;
 color:var(--gold-soft);
 opacity:0.6;
 margin:2px 0 20px;
+}
+.flourish{
+display:flex;
+justify-content:center;
+margin:14px 0 22px;
+}
+.flourish svg{width:118px;height:22px;}
+.flourish path{
+stroke:rgba(203,163,92,0.55);
+stroke-width:1.1;
+fill:none;
+stroke-dasharray:220;
+stroke-dashoffset:220;
+transition:stroke-dashoffset 1.4s cubic-bezier(.2,.8,.2,1);
+}
+.flourish.active path{stroke-dashoffset:0;}
+.star-divider{
+display:flex;
+align-items:center;
+justify-content:center;
+gap:clamp(10px,3.2vw,16px);
+padding:22px 28px;
+margin:-6px 0;
+position:relative;
+z-index:2;
+pointer-events:none;
+}
+.star-divider i{
+display:block;
+width:4px;
+height:4px;
+border-radius:50%;
+background:var(--gold-soft);
+box-shadow:0 0 7px rgba(228,207,160,0.65);
+opacity:0.55;
+animation:starDividerTwinkle 3.2s ease-in-out infinite;
+}
+.star-divider i:nth-child(1){animation-delay:0s;}
+.star-divider i:nth-child(2){animation-delay:0.35s;width:3px;height:3px;}
+.star-divider i:nth-child(3){animation-delay:0.7s;width:5px;height:5px;}
+.star-divider i:nth-child(4){animation-delay:1.05s;width:6px;height:6px;box-shadow:0 0 10px rgba(228,207,160,0.9);}
+.star-divider i:nth-child(5){animation-delay:1.4s;width:5px;height:5px;}
+.star-divider i:nth-child(6){animation-delay:1.75s;width:3px;height:3px;}
+.star-divider i:nth-child(7){animation-delay:2.1s;}
+@keyframes starDividerTwinkle{
+0%,100%{opacity:0.3;}
+50%{opacity:1;}
 }
 .site-stars{
 position:absolute;
@@ -580,14 +630,13 @@ box-shadow:0 8px 24px rgba(0,0,0,0.3);
 #hero{
 position:relative;
 min-height:100vh;
+min-height:100dvh;
 display:flex;
 flex-direction:column;
-justify-content:center;
 align-items:center;
+justify-content:flex-start;
 padding:0;
-background:
-radial-gradient(circle at 50% 0%,rgba(201,143,160,0.16),transparent 55%),
-radial-gradient(circle at 15% 85%,rgba(203,163,92,0.14),transparent 45%);
+background:transparent;
 overflow:hidden;
 }
 .hero-frame-line{
@@ -611,8 +660,13 @@ pointer-events:none;
 .hero-inner{
 position:relative;
 z-index:3;
+flex:1;
+display:flex;
+flex-direction:column;
+justify-content:center;
+width:100%;
 max-width:320px;
-padding:clamp(200px,32vh,255px) 24px clamp(96px,14vh,120px);
+padding:clamp(200px,32vh,248px) 24px 12px;
 }
 .hero-quote{
 font-style:italic;
@@ -657,6 +711,35 @@ font-size:1.02rem;
 color:var(--text-soft);
 line-height:1.75;
 font-style:italic;
+}
+.hero-garland{
+position:absolute;
+top:0;
+left:0;
+right:0;
+z-index:2;
+line-height:0;
+pointer-events:none;
+overflow:hidden;
+height:min(34vh,200px);
+opacity:0;
+transform:translateY(-8px);
+transition:opacity 1.1s cubic-bezier(.2,.8,.2,1),transform 1.1s cubic-bezier(.2,.8,.2,1);
+}
+.hero-garland img{
+display:block;
+width:100%;
+height:100%;
+object-fit:cover;
+object-position:top center;
+opacity:0.88;
+-webkit-mask-image:linear-gradient(to bottom,#000 0%,#000 50%,transparent 100%);
+mask-image:linear-gradient(to bottom,#000 0%,#000 50%,transparent 100%);
+}
+.hero-garland.reveal.active,
+body.invitation-open .hero-garland{
+opacity:1;
+transform:translateY(0);
 }
 .section-deco,
 .section-floral,
@@ -706,57 +789,213 @@ opacity:0.88;
 transform:translateY(0);
 }
 #couple{
-padding:clamp(130px,24vh,170px) 28px 88px;
-overflow:visible;
+padding:80px 28px 88px;
+overflow:hidden;
+position:relative;
+z-index:3;
+background:var(--night);
 }
 #story{
-padding:80px 28px 88px;
-overflow:visible;
+padding:0 20px 96px;
+overflow:hidden;
+position:relative;
+z-index:3;
+background:var(--night);
+isolation:isolate;
 }
-.story-quote{
+.story-floral-deco{
+position:absolute;
+top:0;
+left:0;
+right:0;
+z-index:0;
+pointer-events:none;
+line-height:0;
+opacity:0;
+transform:translateY(-6px);
+transition:opacity 1s cubic-bezier(.2,.8,.2,1),transform 1s cubic-bezier(.2,.8,.2,1);
+}
+.story-floral-deco img{
+display:block;
+width:100%;
+height:auto;
+mix-blend-mode:lighten;
+opacity:0.85;
+-webkit-mask-image:linear-gradient(to bottom,#000 0%,#000 48%,rgba(0,0,0,0.35) 68%,transparent 88%);
+mask-image:linear-gradient(to bottom,#000 0%,#000 48%,rgba(0,0,0,0.35) 68%,transparent 88%);
+}
+.story-floral-deco.reveal.active,
+body.invitation-open .story-floral-deco{
+opacity:1;
+transform:translateY(0);
+}
+.story-head{
 position:relative;
 z-index:2;
-max-width:300px;
-margin:18px auto 28px;
-padding:18px 20px;
-border:1px solid rgba(203,163,92,0.28);
-border-radius:12px;
-background:rgba(27,36,64,0.38);
-backdrop-filter:blur(8px);
--webkit-backdrop-filter:blur(8px);
-font-style:italic;
-font-size:1rem;
-line-height:1.75;
-color:var(--cream);
+width:calc(100% + 40px);
+margin:0 -20px 22px;
+padding:34px 28px 36px;
+text-align:center;
 }
-.story-quote::before,.story-quote::after{
+.story-head::before{
 content:'';
 position:absolute;
-left:50%;
-transform:translateX(-50%);
-width:min(120px,40%);
-height:1px;
-background:linear-gradient(90deg,transparent,rgba(203,163,92,0.55),transparent);
+left:0;
+right:0;
+top:0;
+bottom:-22px;
+background:linear-gradient(180deg,rgba(10,14,28,0.97) 0%,rgba(10,14,28,0.93) 22%,rgba(12,17,32,0.82) 48%,rgba(15,21,38,0.42) 72%,rgba(15,21,38,0.08) 88%,transparent 100%);
+z-index:-1;
+pointer-events:none;
 }
-.story-quote::before{top:-1px;}
-.story-quote::after{bottom:-1px;}
-.scroll-hint{
+.story-head::after{
+content:'';
 position:absolute;
-bottom:calc(88px + env(safe-area-inset-bottom,0px));
-left:50%;
-transform:translateX(-50%);
+left:0;
+right:0;
+bottom:-18px;
+height:24px;
+background:radial-gradient(ellipse 70% 100% at 50% 0%,rgba(12,17,32,0.35) 0%,transparent 72%);
+z-index:-1;
+pointer-events:none;
+}
+.story-head .eyebrow{
+color:var(--gold-soft);
+margin-bottom:8px;
+letter-spacing:4.5px;
+}
+.story-title{
+font-size:2rem;
+color:var(--gold);
+margin-bottom:10px;
+-webkit-text-stroke:0.7px #fff;
+paint-order:stroke fill;
+letter-spacing:0.5px;
+text-shadow:0 2px 18px rgba(0,0,0,0.4);
+}
+.story-tagline{
+font-style:italic;
+font-size:0.98rem;
+color:rgba(247,241,228,0.82);
+line-height:1.75;
+max-width:300px;
+margin:0 auto;
+}
+.story-map{
+max-width:300px;
+margin:0 auto 34px;
+position:relative;
+z-index:2;
+}
+.story-arc-svg{
+width:100%;
+height:auto;
+display:block;
+}
+.story-arc-line{
+stroke:rgba(203,163,92,0.38);
+stroke-width:1;
+fill:none;
+stroke-dasharray:320;
+stroke-dashoffset:320;
+transition:stroke-dashoffset 2s cubic-bezier(.2,.8,.2,1);
+}
+.story-map.reveal.active .story-arc-line{stroke-dashoffset:0;}
+.map-star{
+fill:var(--gold-soft);
+opacity:0;
+transition:opacity 0.5s ease 1.2s;
+}
+.story-map.reveal.active .map-star{opacity:0.75;}
+.story-map.reveal.active .map-star--end{opacity:1;}
+.story-chapters{
+max-width:320px;
+margin:0 auto;
+position:relative;
+z-index:2;
+padding:0 4px;
+}
+.story-chapter{
+position:relative;
+padding:0 0 30px 30px;
+text-align:left;
+border-left:1px solid rgba(203,163,92,0.16);
+margin-left:10px;
+}
+.story-chapter h3,
+.story-chapter p,
+.story-chapter .chapter-year{
+text-shadow:0 1px 12px rgba(15,21,38,0.9),0 0 20px rgba(27,36,64,0.7);
+}
+.story-chapter:last-child{
+padding-bottom:0;
+border-left-color:transparent;
+}
+.story-chapter::before{
+content:'';
+position:absolute;
+left:-5px;
+top:5px;
+width:9px;
+height:9px;
+border-radius:50%;
+background:var(--night);
+border:1.5px solid rgba(203,163,92,0.55);
+box-shadow:0 0 12px rgba(203,163,92,0.35);
+transition:transform 0.5s ease,box-shadow 0.5s ease,border-color 0.5s ease;
+}
+.story-chapter.reveal.active::before{
+transform:scale(1.15);
+box-shadow:0 0 18px rgba(203,163,92,0.55);
+}
+.story-chapter--finale::before{
+width:11px;
+height:11px;
+left:-6px;
+top:4px;
+border-color:var(--cream);
+box-shadow:0 0 20px rgba(228,207,160,0.65);
+}
+.chapter-year{
+display:inline-block;
+font-family:'Cinzel',serif;
+font-size:0.68rem;
+letter-spacing:2.5px;
+color:var(--rose);
+margin-bottom:8px;
+}
+.story-chapter h3{
+font-family:'EB Garamond',serif;
+font-style:italic;
+font-size:1.2rem;
+color:var(--cream);
+margin-bottom:6px;
+line-height:1.3;
+}
+.story-chapter p{
+font-size:0.96rem;
+color:var(--text-soft);
+line-height:1.72;
+}
+.story-chapter--finale h3{color:var(--gold-soft);}
+.scroll-hint{
+position:relative;
+flex-shrink:0;
 z-index:3;
 display:flex;
 flex-direction:column;
 align-items:center;
-gap:10px;
+gap:8px;
 text-decoration:none;
+margin-top:auto;
+padding:10px 0 calc(76px + env(safe-area-inset-bottom,0px));
+width:100%;
 }
 .scroll-hint.reveal{
-transform:translateX(-50%) translateY(32px);
+transform:translateY(24px);
 }
 .scroll-hint.reveal.active{
-transform:translateX(-50%) translateY(0);
+transform:translateY(0);
 }
 .scroll-hint.reveal.active .scroll-icon{
 animation:scrollFloat 3s ease-in-out infinite;
@@ -847,12 +1086,8 @@ margin-top:2px;
 #couple .flourish,
 #couple .couple-intro,
 #couple .couple-card,
-#couple .amp-divider,
-#story .eyebrow,
-#story .flourish,
-#story .story-quote,
-#story .timeline,
-#story .section-title{
+#couple .couple-photo-block,
+#couple .amp-divider{
 position:relative;
 z-index:2;
 }
@@ -864,38 +1099,133 @@ max-width:300px;
 margin:0 auto 34px;
 font-style:italic;
 }
-.moon-frame{
+.couple-photo-block{
 position:relative;
-width:172px;
-height:172px;
-margin:0 auto 26px;
+width:100%;
+max-width:360px;
+margin:0 auto 20px;
+z-index:2;
+overflow:visible;
+isolation:isolate;
 }
-.moon-ring{
-position:absolute;
-inset:0;
-border-radius:50%;
+.cp-photo{
+position:relative;
+z-index:3;
+width:62%;
+margin:0 auto;
+}
+.arch-photo-wrap{
+position:relative;
+width:100%;
+margin:0;
+z-index:2;
+}
+.arch-photo{
+width:100%;
+height:auto;
+aspect-ratio:5/6;
+border-radius:50% 50% 8px 8px;
 border:1px solid var(--gold);
+padding:8px;
+background:rgba(27,36,64,0.55);
+position:relative;
+transition:box-shadow 1.2s ease,transform 1.1s cubic-bezier(.2,.8,.2,1);
 }
-.moon-ring::before{
+.couple-card.reveal.active .arch-photo{
+box-shadow:0 10px 36px rgba(0,0,0,0.35),0 0 28px rgba(228,207,160,0.12);
+transform:scale(1.02);
+}
+.arch-photo::before{
 content:'';
 position:absolute;
-inset:8px;
-border-radius:50%;
+inset:2px;
+border-radius:50% 50% 6px 6px;
 border:1px solid rgba(203,163,92,0.4);
+pointer-events:none;
 }
-.moon-photo{
-position:absolute;
-inset:14px;
-border-radius:50%;
-overflow:hidden;
+.arch-photo-inner{
+width:100%;
+height:100%;
+border-radius:50% 50% 6px 6px;
 background:linear-gradient(160deg,var(--rose),var(--gold-soft));
-box-shadow:0 0 26px rgba(228,207,160,0.25);
+overflow:hidden;
 }
-.moon-photo img{
-width:100%;height:100%;
+.arch-photo-inner img{
+width:100%;
+height:100%;
 object-fit:cover;
 object-position:center top;
 display:block;
+}
+.cp-layer{
+position:absolute;
+bottom:0;
+width:82%;
+pointer-events:none;
+line-height:0;
+}
+.couple-card--bride .cp-layer{
+left:auto;
+right:-24px;
+transform:none;
+}
+.couple-card--groom .cp-layer{
+left:-16px;
+right:auto;
+transform:none;
+}
+.cp-layer img{
+display:block;
+width:100%;
+height:auto;
+}
+.cp-layer-b{z-index:1;opacity:0.95;}
+.cp-layer-f{z-index:2;opacity:0.95;}
+.cp-layer-goyang{
+z-index:2;
+width:70%;
+opacity:0.92;
+}
+.couple-card--bride .cp-layer-goyang{
+right:-8px;
+left:auto;
+}
+.couple-card--groom .cp-layer-goyang{
+left:-4px;
+right:auto;
+}
+@keyframes cp-floral-sway{
+0%,100%{transform:rotate(0deg) translate3d(0,0,0);}
+25%{transform:rotate(2.4deg) translate3d(1px,0.5px,0);}
+50%{transform:rotate(-2deg) translate3d(-1px,1px,0);}
+75%{transform:rotate(1.6deg) translate3d(0.5px,0,0);}
+}
+@keyframes cp-goyang{
+0%{transform:rotateZ(0deg) scale(1);}
+33%{transform:rotateZ(10deg) scale(1);}
+66%{transform:rotateZ(-4deg) scale(1);}
+100%{transform:rotateZ(0deg) scale(1);}
+}
+.couple-card.reveal.active .cp-layer-b img,
+.couple-card.reveal.active .cp-layer-f img{
+animation:cp-floral-sway 5.4s ease-in-out infinite;
+}
+.couple-card--bride.reveal.active .cp-layer-b img,
+.couple-card--bride.reveal.active .cp-layer-f img{
+transform-origin:78% 92%;
+}
+.couple-card--groom.reveal.active .cp-layer-b img,
+.couple-card--groom.reveal.active .cp-layer-f img{
+transform-origin:22% 92%;
+animation-delay:-2.6s;
+animation-duration:5.8s;
+}
+.couple-card.reveal.active .cp-layer-goyang img{
+animation:cp-goyang 5s ease-in-out infinite;
+transform-origin:bottom center;
+}
+@media(prefers-reduced-motion:reduce){
+.couple-card.reveal.active .cp-layer img{animation:none;}
 }
 .couple-card h2{
 font-size:1.9rem;
@@ -1006,87 +1336,74 @@ text-transform:uppercase;
 transition:all 0.3s ease;
 }
 .event-action-btn:hover{background:var(--gold-soft);color:var(--night-deep);}
-#story{background:transparent;}
-.timeline{
+#story .story-head,
+#story .story-map,
+#story .story-chapters{
 position:relative;
-max-width:320px;
-margin:20px auto 0;
-text-align:left;
-z-index:1;
+z-index:2;
 }
-.timeline::before{
-content:'';
-position:absolute;
-left:5px;
-top:6px;
-bottom:6px;
-width:1px;
-background:linear-gradient(180deg,var(--gold),rgba(203,163,92,0.2));
-}
-.tl-item{
+#story .story-floral-deco{z-index:0;}
+#gallery{
 position:relative;
-padding:0 0 34px 30px;
+padding:88px 24px 100px;
+overflow:hidden;
+background:
+radial-gradient(ellipse at 80% 20%,rgba(201,143,160,0.07),transparent 50%),
+radial-gradient(ellipse at 15% 90%,rgba(203,163,92,0.06),transparent 45%);
 }
-.tl-item:last-child{padding-bottom:0;}
-.tl-star{
-position:absolute;
-left:-1px;
-top:2px;
-width:12px;height:12px;
+.gallery-head{
+position:relative;
+z-index:2;
+max-width:340px;
+margin:0 auto 28px;
 }
-.tl-star svg{display:block;width:100%;height:100%;}
-.tl-item h4{
-font-size:1.25rem;
-font-style:italic;
-font-family:'EB Garamond',serif;
+.gallery-title{
+font-size:2rem;
 color:var(--cream);
-margin-bottom:5px;
 }
-.tl-item .tl-year{
-font-family:'Jost',sans-serif;
-font-size:0.6rem;
-letter-spacing:2px;
-text-transform:uppercase;
-color:var(--rose);
-display:block;
-margin-bottom:4px;
-}
-.tl-item p{
-font-size:1rem;
-color:var(--text-soft);
-line-height:1.6;
-}
-#gallery{background:transparent;padding-bottom:100px;}
+#gallery .flourish{margin-bottom:0;}
 .gallery-lead{
 font-size:0.98rem;
 font-style:italic;
 color:var(--text-soft);
 max-width:280px;
-margin:8px auto 28px;
+margin:10px auto 28px;
 line-height:1.65;
 position:relative;
 z-index:1;
 }
 .gallery-panel{
 position:relative;
-z-index:1;
+z-index:2;
 max-width:360px;
 margin:0 auto;
-padding:14px;
-border:1px solid rgba(203,163,92,0.22);
-border-radius:16px;
-background:rgba(27,36,64,0.42);
-backdrop-filter:blur(12px);
--webkit-backdrop-filter:blur(12px);
-box-shadow:0 16px 40px rgba(0,0,0,0.28),inset 0 1px 0 rgba(228,207,160,0.06);
+padding:16px;
+border:1px solid rgba(203,163,92,0.28);
+border-radius:18px;
+background:rgba(27,36,64,0.48);
+backdrop-filter:blur(14px);
+-webkit-backdrop-filter:blur(14px);
+box-shadow:0 20px 48px rgba(0,0,0,0.32),inset 0 1px 0 rgba(228,207,160,0.08);
 }
 .gallery-panel::before{
 content:'';
 position:absolute;
-inset:8px;
-border:1px solid rgba(203,163,92,0.1);
-border-radius:12px;
+inset:9px;
+border:1px solid rgba(203,163,92,0.12);
+border-radius:13px;
 pointer-events:none;
+}
+.gallery-panel::after{
+content:'';
+position:absolute;
+top:0;
+left:50%;
+transform:translateX(-50%);
+width:min(140px,40%);
+height:2px;
+background:linear-gradient(90deg,transparent,var(--gold-soft),transparent);
+opacity:0.45;
+border-radius:2px;
 }
 .gallery-masonry{
 display:grid;
@@ -1211,12 +1528,23 @@ display:flex;align-items:center;justify-content:center;
 #gift{
 position:relative;
 overflow:hidden;
-padding-bottom:100px;
-background:linear-gradient(180deg,rgba(15,21,38,0.2),rgba(15,21,38,0.55) 50%,rgba(15,21,38,0.2));
+padding:88px 24px 100px;
+background:
+radial-gradient(ellipse at 50% 0%,rgba(203,163,92,0.1),transparent 55%),
+radial-gradient(ellipse at 50% 100%,rgba(201,143,160,0.08),transparent 50%),
+linear-gradient(180deg,rgba(15,21,38,0.15),rgba(15,21,38,0.45) 50%,rgba(15,21,38,0.15));
 color:var(--gold-soft);
 }
+#gift .gift-head{
+position:relative;
+z-index:2;
+max-width:340px;
+margin:0 auto;
+}
 #gift .eyebrow{color:var(--gold);}
-#gift h2{color:var(--cream);}
+#gift h2{color:var(--cream);font-size:2rem;}
+#gift .flourish{margin-bottom:14px;}
+#gift .gift-panel{margin-top:2px;}
 .gift-deco{
 position:absolute;
 inset:0;
@@ -1247,21 +1575,36 @@ position:relative;
 z-index:2;
 max-width:360px;
 margin:0 auto;
-padding:28px 22px 26px;
-border:1px solid rgba(203,163,92,0.22);
-border-radius:16px;
-background:rgba(27,36,64,0.45);
-backdrop-filter:blur(12px);
--webkit-backdrop-filter:blur(12px);
-box-shadow:0 16px 40px rgba(0,0,0,0.28),inset 0 1px 0 rgba(228,207,160,0.06);
+padding:20px 22px 28px;
+border:1px solid rgba(203,163,92,0.3);
+border-radius:18px;
+background:rgba(27,36,64,0.52);
+backdrop-filter:blur(14px);
+-webkit-backdrop-filter:blur(14px);
+box-shadow:0 20px 48px rgba(0,0,0,0.32),inset 0 1px 0 rgba(228,207,160,0.08);
+display:flex;
+flex-direction:column;
+align-items:center;
+text-align:center;
 }
 .gift-panel::before{
 content:'';
 position:absolute;
-inset:8px;
-border:1px solid rgba(203,163,92,0.1);
-border-radius:12px;
+inset:9px;
+border:1px solid rgba(203,163,92,0.12);
+border-radius:13px;
 pointer-events:none;
+}
+.gift-panel::after{
+content:'';
+position:absolute;
+top:0;
+left:50%;
+transform:translateX(-50%);
+width:min(120px,36%);
+height:2px;
+background:linear-gradient(90deg,transparent,var(--gold-soft),transparent);
+opacity:0.5;
 }
 .gift-lead{
 font-size:1.02rem;
@@ -1275,12 +1618,13 @@ z-index:1;
 }
 .gift-icon-wrap{
 width:68px;height:68px;
-margin:0 auto 20px;
+margin:0 auto 16px;
 position:relative;
 display:flex;
 align-items:center;
 justify-content:center;
 z-index:1;
+flex-shrink:0;
 }
 .gift-icon-ring{
 position:absolute;
@@ -1306,7 +1650,13 @@ display:flex;
 align-items:center;
 justify-content:center;
 }
-.gift-icon svg{width:100%;height:100%;color:var(--gold-soft);filter:drop-shadow(0 0 8px rgba(228,207,160,0.35));}
+.gift-icon svg{
+width:100%;
+height:100%;
+color:var(--gold-soft);
+filter:drop-shadow(0 0 8px rgba(228,207,160,0.35));
+transform:translateY(-3px);
+}
 .gift-toggle{
 display:inline-flex;
 align-items:center;
@@ -1519,47 +1869,173 @@ margin-bottom:3px;
 font-size:0.98rem;
 color:var(--text-soft);
 }
-footer{
-background:var(--night-deep);
-color:var(--gold-soft);
-text-align:center;
-padding:56px 24px 110px;
+footer.night-footer{
 position:relative;
+padding:56px 24px 118px;
+text-align:center;
+overflow:hidden;
+background:linear-gradient(180deg,transparent 0%,rgba(15,21,38,0.55) 18%,var(--night-deep) 68%);
+}
+.footer-sky{
+position:absolute;
+inset:0;
+pointer-events:none;
 overflow:hidden;
 }
-footer .footer-names{
-color:var(--cream);
-font-size:1.7rem;
-margin-bottom:10px;
+.footer-sky::before{
+content:'';
+position:absolute;
+top:0;
+left:0;
+right:0;
+height:1px;
+background:linear-gradient(90deg,transparent,rgba(203,163,92,0.35),transparent);
+}
+.footer-moon{
+position:absolute;
+top:28px;
+left:50%;
+transform:translateX(-50%);
+width:140px;
+height:48px;
+border-radius:50%;
+box-shadow:0 -10px 0 0 rgba(228,207,160,0.1);
+opacity:0.55;
+}
+.footer-shoot{
+position:absolute;
+top:42px;
+right:18%;
+width:48px;
+height:2px;
+background:linear-gradient(90deg,rgba(228,207,160,0.7),transparent);
+transform:rotate(-28deg);
+opacity:0.45;
+animation:footerShoot 5s ease-in-out infinite;
+}
+@keyframes footerShoot{
+0%,100%{opacity:0;transform:rotate(-28deg) translateX(0);}
+8%{opacity:0.5;}
+35%{opacity:0;transform:rotate(-28deg) translateX(28px);}
+}
+.footer-body{
 position:relative;
-z-index:1;
+z-index:2;
+max-width:320px;
+margin:0 auto;
+padding-top:36px;
 }
-footer .footer-names .amp{
-color:var(--rose);
-font-style:italic;
-font-family:'EB Garamond',serif;
+.footer-orion{
+margin:0 0 4px;
 }
-footer p.footer-msg{
-font-family:'EB Garamond',serif;
-font-style:italic;
-font-size:1rem;
-max-width:290px;
-margin:0 auto 16px;
-line-height:1.7;
-opacity:0.9;
-position:relative;
-z-index:1;
+.footer-orion svg{
+width:min(72vw,190px);
+height:auto;
 }
-footer .footer-credit{
+.footer-orion path{
+stroke:var(--gold-soft);
+stroke-width:1;
+fill:none;
+}
+.footer-constellation-tag{
 font-family:'Jost',sans-serif;
-font-size:0.62rem;
-letter-spacing:2px;
+font-size:0.56rem;
+letter-spacing:2.6px;
 text-transform:uppercase;
 color:var(--gold-soft);
-opacity:0.6;
-margin-top:18px;
-position:relative;
-z-index:1;
+opacity:0.55;
+margin:0 0 24px;
+}
+.footer-monogram{
+display:flex;
+align-items:center;
+justify-content:center;
+gap:16px;
+margin-bottom:14px;
+}
+.footer-monogram span{
+font-family:'Cinzel',serif;
+font-size:1.05rem;
+letter-spacing:2px;
+color:var(--gold-soft);
+opacity:0.65;
+}
+.footer-monogram i{
+display:block;
+width:5px;
+height:5px;
+border-radius:50%;
+background:var(--gold-soft);
+box-shadow:0 0 12px rgba(228,207,160,0.85);
+}
+.footer-couple{
+font-size:2.05rem;
+color:var(--cream);
+margin-bottom:8px;
+line-height:1.28;
+}
+.footer-couple .amp{
+color:var(--rose);
+font-family:'EB Garamond',serif;
+font-style:italic;
+margin:0 5px;
+}
+.footer-date{
+font-family:'Jost',sans-serif;
+font-size:0.62rem;
+letter-spacing:3px;
+text-transform:uppercase;
+color:var(--rose);
+opacity:0.82;
+margin-bottom:22px;
+}
+.footer-closing{
+font-family:'EB Garamond',serif;
+font-style:italic;
+font-size:1.03rem;
+line-height:1.78;
+color:var(--text-soft);
+margin:0 auto 26px;
+max-width:290px;
+}
+.footer-startrail{
+display:flex;
+align-items:center;
+justify-content:center;
+gap:clamp(9px,2.8vw,14px);
+margin-bottom:20px;
+}
+.footer-startrail i{
+display:block;
+width:3px;
+height:3px;
+border-radius:50%;
+background:var(--gold-soft);
+opacity:0.45;
+box-shadow:0 0 6px rgba(228,207,160,0.4);
+}
+.footer-startrail i:nth-child(1){opacity:0.3;}
+.footer-startrail i:nth-child(3){
+width:5px;
+height:5px;
+opacity:0.95;
+box-shadow:0 0 10px rgba(228,207,160,0.75);
+}
+.footer-startrail i:nth-child(5){opacity:0.3;}
+.footer-sign{
+font-family:'EB Garamond',serif;
+font-style:italic;
+font-size:0.98rem;
+color:rgba(247,241,228,0.78);
+margin-bottom:16px;
+}
+.footer-year{
+font-family:'Jost',sans-serif;
+font-size:0.58rem;
+letter-spacing:3.5px;
+text-transform:uppercase;
+color:var(--gold-soft);
+opacity:0.42;
 }
 .navbar{
 position:fixed;
@@ -1649,6 +2125,28 @@ body.music-ready .music-btn{opacity:1;visibility:visible;pointer-events:auto;}
 *:not(#cover):not(#cover *){animation:none !important;transition:none !important;}
 .shooting-star{display:none;}
 }
+@media(max-width:480px){
+.hero-frame-line{
+inset:8px 0 calc(68px + env(safe-area-inset-bottom,0px)) 0;
+}
+.hero-frame-corner.tl{top:4px;left:0;}
+.hero-frame-corner.tr{top:4px;right:0;}
+.hero-frame-corner.bl{bottom:calc(4px + env(safe-area-inset-bottom,0px));left:0;}
+.hero-frame-corner.br{bottom:calc(4px + env(safe-area-inset-bottom,0px));right:0;}
+.hero-inner{padding:clamp(168px,28vh,210px) 20px 10px;}
+.hero-names{font-size:2.25rem;margin:20px 0 6px;}
+.hero-date{margin-bottom:16px;letter-spacing:2.5px;font-size:0.72rem;}
+.hero-invite{font-size:0.96rem;line-height:1.65;}
+.hero-quote{font-size:0.96rem;line-height:1.7;}
+.scroll-hint{padding-bottom:calc(70px + env(safe-area-inset-bottom,0px));}
+#story{padding-top:0;}
+.story-head{padding-top:30px;}
+}
+@media(max-height:740px){
+.hero-inner{padding-top:clamp(140px,24vh,180px);}
+.hero-names{font-size:2.15rem;}
+.hero-invite{margin-bottom:0;}
+}
 </style>
 </head>
 <body>
@@ -1734,11 +2232,11 @@ body.music-ready .music-btn{opacity:1;visibility:visible;pointer-events:auto;}
 <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3v10.55A4 4 0 1 0 14 17V7h4V3h-6z"/></svg>
 </div>
 <audio id="song" loop preload="auto">
-<source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
+<source src="https://mp3tourl.com/audio/1783431467130-6ce04d3a-b1e0-4173-bbe7-ca5e5616c764.mp3" type="audio/mpeg">
 </audio>
 
 <section id="hero">
-<div class="section-deco section-deco-top reveal" aria-hidden="true"><img src="https://ivy.inviteable.id/wp-content/uploads/2025/04/Artboard-3-MINANG-2-1.webp" alt=""></div>
+<div class="hero-garland reveal" aria-hidden="true"><img src="https://ivy.inviteable.id/wp-content/uploads/2025/04/Artboard-3-MINANG-2-1.webp" alt=""></div>
 <div class="hero-frame-line" aria-hidden="true"></div>
 <div class="hero-frame-corner tl"><svg viewBox="0 0 34 34"><path d="M2 32 C2 20 2 10 2 2 C10 2 20 2 32 2" fill="none" stroke="#CBA35C" stroke-width="1.1"/></svg></div>
 <div class="hero-frame-corner tr"><svg viewBox="0 0 34 34"><path d="M2 32 C2 20 2 10 2 2 C10 2 20 2 32 2" fill="none" stroke="#CBA35C" stroke-width="1.1"/></svg></div>
@@ -1764,7 +2262,6 @@ body.music-ready .music-btn{opacity:1;visibility:visible;pointer-events:auto;}
 </section>
 
 <section id="couple">
-<div class="section-deco section-deco-top reveal" aria-hidden="true"><img src="https://ivy.inviteable.id/wp-content/uploads/2025/04/Artboard-3-MINANG-2-1.webp" alt=""></div>
 <p class="eyebrow reveal">Kedua Mempelai</p>
 <h2 class="reveal italic" style="font-size:1.9rem;">Yang Berbahagia</h2>
 <div class="constellation reveal">
@@ -1779,11 +2276,25 @@ body.music-ready .music-btn{opacity:1;visibility:visible;pointer-events:auto;}
 </div>
 <p class="constellation-label">Rasi Cassiopeia</p>
 <p class="couple-intro reveal">Tanpa mengurangi rasa hormat, kami bermaksud mengundang Bapak/Ibu/Saudara/i untuk menghadiri acara pernikahan kami.</p>
-<div class="couple-card reveal">
-<div class="moon-frame">
-<div class="moon-ring"></div>
-<div class="moon-photo">
+<div class="couple-card couple-card--bride reveal">
+<div class="couple-photo-block">
+<div class="cp-layer cp-layer-b" aria-hidden="true">
+<img src="https://ivy.inviteable.id/wp-content/uploads/2025/04/Artboard-5-B-MINANG-2.png" alt="">
+</div>
+<div class="cp-layer cp-layer-goyang" aria-hidden="true">
+<img src="https://ivy.inviteable.id/wp-content/uploads/2025/04/Artboard-5-goyang-1-MINANG-2-1.webp" alt="">
+</div>
+<div class="cp-photo">
+<div class="arch-photo-wrap">
+<div class="arch-photo">
+<div class="arch-photo-inner">
 <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=400&q=80" alt="Kanaya">
+</div>
+</div>
+</div>
+</div>
+<div class="cp-layer cp-layer-f" aria-hidden="true">
+<img src="https://ivy.inviteable.id/wp-content/uploads/2025/04/Artboard-5-F-MINANG-2-1.png" alt="">
 </div>
 </div>
 <h2>Kanaya</h2>
@@ -1791,11 +2302,25 @@ body.music-ready .music-btn{opacity:1;visibility:visible;pointer-events:auto;}
 <p class="parents">Putri dari<br>Bpk. Hendra Wibowo &amp; Ibu Ratna Sari</p>
 </div>
 <div class="amp-divider reveal">&amp;</div>
-<div class="couple-card reveal">
-<div class="moon-frame">
-<div class="moon-ring"></div>
-<div class="moon-photo">
+<div class="couple-card couple-card--groom reveal">
+<div class="couple-photo-block">
+<div class="cp-layer cp-layer-b" aria-hidden="true">
+<img src="https://ivy.inviteable.id/wp-content/uploads/2025/04/Artboard-5-B-MINANG-2.webp" alt="">
+</div>
+<div class="cp-layer cp-layer-goyang" aria-hidden="true">
+<img src="https://ivy.inviteable.id/wp-content/uploads/2025/04/Artboard-5-goyang-1-MINANG-2-2.webp" alt="">
+</div>
+<div class="cp-photo">
+<div class="arch-photo-wrap">
+<div class="arch-photo">
+<div class="arch-photo-inner">
 <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&q=80" alt="Alvaro">
+</div>
+</div>
+</div>
+</div>
+<div class="cp-layer cp-layer-f" aria-hidden="true">
+<img src="https://ivy.inviteable.id/wp-content/uploads/2025/04/Artboard-5-F-MINANG-2.webp" alt="">
 </div>
 </div>
 <h2>Alvaro</h2>
@@ -1843,64 +2368,53 @@ body.music-ready .music-btn{opacity:1;visibility:visible;pointer-events:auto;}
 </section>
 
 <section id="story">
-<p class="eyebrow reveal">Our Story</p>
-<h2 class="reveal italic" style="font-size:1.9rem;">Perjalanan Kami</h2>
-<div class="constellation reveal">
-<svg viewBox="0 0 150 40" xmlns="http://www.w3.org/2000/svg">
-<path d="M20 10 L38 8 L42 22 L26 26 Z M42 22 L58 28 L74 20"/>
-<circle cx="20" cy="10" r="2.2" fill="#CBA35C"/>
-<circle cx="38" cy="8" r="2.2" fill="#CBA35C"/>
-<circle cx="42" cy="22" r="2.2" fill="#CBA35C"/>
-<circle cx="26" cy="26" r="2.2" fill="#CBA35C"/>
-<circle cx="58" cy="28" r="2" fill="#CBA35C"/>
-<circle cx="74" cy="20" r="2.8" fill="#E4CFA0"/>
+<div class="story-floral-deco reveal" aria-hidden="true">
+<img src="https://ivy.inviteable.id/wp-content/uploads/2025/04/Artboard-7-MINANG-2.webp" alt="">
+</div>
+<div class="story-head reveal">
+<p class="eyebrow">Our Story</p>
+<h2 class="italic story-title">Perjalanan Kami</h2>
+<p class="story-tagline">Setiap bintang adalah bab dalam kisah kami menuju pelaminan.</p>
+</div>
+<div class="story-map reveal" aria-hidden="true">
+<svg class="story-arc-svg" viewBox="0 0 300 72" xmlns="http://www.w3.org/2000/svg">
+<path class="story-arc-line" d="M18 54 Q90 8 150 18 T282 54"/>
+<circle class="map-star" cx="18" cy="54" r="3.5"/>
+<circle class="map-star" cx="98" cy="14" r="3.5"/>
+<circle class="map-star" cx="198" cy="14" r="3.5"/>
+<circle class="map-star map-star--end" cx="282" cy="54" r="4.5"/>
 </svg>
 </div>
-<p class="constellation-label">Rasi Ursa Minor &middot; Sang Penunjuk Arah</p>
-<p class="story-quote reveal">"Setiap pertemuan adalah takdir, setiap langkah adalah doa menuju pelaminan."</p>
-<div class="timeline reveal">
-<div class="tl-item">
-<span class="tl-star"><svg viewBox="0 0 12 12"><path d="M6 0 L7.4 4.6 L12 6 L7.4 7.4 L6 12 L4.6 7.4 L0 6 L4.6 4.6 Z" fill="#CBA35C"/></svg></span>
-<span class="tl-year">2021</span>
-<h4>Pertemuan Pertama</h4>
+<div class="story-chapters">
+<article class="story-chapter reveal">
+<span class="chapter-year">2021</span>
+<h3>Pertemuan Pertama</h3>
 <p>Bertemu di sebuah acara kampus, sebuah percakapan singkat yang ternyata menjadi awal dari cerita panjang.</p>
-</div>
-<div class="tl-item">
-<span class="tl-star"><svg viewBox="0 0 12 12"><path d="M6 0 L7.4 4.6 L12 6 L7.4 7.4 L6 12 L4.6 7.4 L0 6 L4.6 4.6 Z" fill="#CBA35C"/></svg></span>
-<span class="tl-year">2023</span>
-<h4>Menjalin Hubungan</h4>
+</article>
+<article class="story-chapter reveal">
+<span class="chapter-year">2023</span>
+<h3>Menjalin Hubungan</h3>
 <p>Dari teman berbincang menjadi pasangan yang saling menguatkan dalam setiap langkah.</p>
-</div>
-<div class="tl-item">
-<span class="tl-star"><svg viewBox="0 0 12 12"><path d="M6 0 L7.4 4.6 L12 6 L7.4 7.4 L6 12 L4.6 7.4 L0 6 L4.6 4.6 Z" fill="#CBA35C"/></svg></span>
-<span class="tl-year">2025</span>
-<h4>Lamaran</h4>
+</article>
+<article class="story-chapter reveal">
+<span class="chapter-year">2025</span>
+<h3>Lamaran</h3>
 <p>Di bawah langit senja, sebuah janji diucapkan untuk melangkah bersama menuju pernikahan.</p>
-</div>
-<div class="tl-item">
-<span class="tl-star"><svg viewBox="0 0 12 12"><path d="M6 0 L7.4 4.6 L12 6 L7.4 7.4 L6 12 L4.6 7.4 L0 6 L4.6 4.6 Z" fill="#CBA35C"/></svg></span>
-<span class="tl-year">2026</span>
-<h4>Hari Pernikahan</h4>
+</article>
+<article class="story-chapter story-chapter--finale reveal">
+<span class="chapter-year">2026</span>
+<h3>Hari Pernikahan</h3>
 <p>Kini tiba waktunya kami mengucap janji suci, dan kami mengundang Anda menjadi saksi.</p>
-</div>
+</article>
 </div>
 </section>
 
 <section id="gallery">
-<p class="eyebrow reveal">Our Moments</p>
-<h2 class="reveal italic" style="font-size:1.9rem;">Galeri</h2>
-<div class="constellation reveal">
-<svg viewBox="0 0 150 50" xmlns="http://www.w3.org/2000/svg">
-<path d="M30 30 L50 22 L58 38 L38 46 Z M40 26 L40 8"/>
-<circle cx="30" cy="30" r="2.2" fill="#CBA35C"/>
-<circle cx="50" cy="22" r="2.2" fill="#CBA35C"/>
-<circle cx="58" cy="38" r="2.2" fill="#CBA35C"/>
-<circle cx="38" cy="46" r="2.2" fill="#CBA35C"/>
-<circle cx="40" cy="8" r="2.8" fill="#E4CFA0"/>
-</svg>
+<div class="gallery-head reveal">
+<p class="eyebrow">Our Moments</p>
+<h2 class="gallery-title italic">Galeri</h2>
+<p class="gallery-lead">Kenangan indah yang telah kami lalui bersama</p>
 </div>
-<p class="constellation-label">Rasi Lyra &middot; Sang Harpa</p>
-<p class="gallery-lead reveal">Kenangan indah yang telah kami lalui bersama</p>
 <div class="gallery-panel reveal">
 <div class="gallery-masonry">
 <button type="button" class="gal-item gal-feature" data-gal="0" aria-label="Lihat foto 1">
@@ -1932,9 +2446,17 @@ body.music-ready .music-btn{opacity:1;visibility:visible;pointer-events:auto;}
 </section>
 
 <section id="gift">
-<p class="eyebrow reveal">Wedding Gift</p>
-<h2 class="reveal italic" style="font-size:1.9rem;">Tanda Kasih</h2>
-<div class="constellation reveal">
+<div class="gift-deco" aria-hidden="true">
+<span class="gift-sparkle"></span>
+<span class="gift-sparkle"></span>
+<span class="gift-sparkle"></span>
+<span class="gift-sparkle"></span>
+<span class="gift-sparkle"></span>
+</div>
+<div class="gift-head reveal">
+<p class="eyebrow">Wedding Gift</p>
+<h2 class="italic">Tanda Kasih</h2>
+<div class="constellation">
 <svg viewBox="0 0 150 40" xmlns="http://www.w3.org/2000/svg">
 <path d="M10 34 Q30 10 55 14 Q75 6 95 14 Q120 10 140 34"/>
 <circle cx="10" cy="34" r="2.2" fill="#E4CFA0"/>
@@ -1945,12 +2467,7 @@ body.music-ready .music-btn{opacity:1;visibility:visible;pointer-events:auto;}
 </svg>
 </div>
 <p class="constellation-label">Rasi Corona Borealis &middot; Mahkota Utara</p>
-<div class="gift-deco" aria-hidden="true">
-<span class="gift-sparkle"></span>
-<span class="gift-sparkle"></span>
-<span class="gift-sparkle"></span>
-<span class="gift-sparkle"></span>
-<span class="gift-sparkle"></span>
+<div class="flourish"><svg viewBox="0 0 130 26"><path d="M2 13 C 30 2, 45 24, 65 13 C 85 2, 100 24, 128 13"/></svg></div>
 </div>
 <div class="gift-panel reveal">
 <div class="gift-icon-wrap" aria-hidden="true">
@@ -2029,10 +2546,15 @@ body.music-ready .music-btn{opacity:1;visibility:visible;pointer-events:auto;}
 <div class="wish-list reveal" id="wishList"></div>
 </section>
 
-<footer>
-<div class="constellation reveal">
+<footer class="night-footer">
+<div class="footer-sky" aria-hidden="true">
+<span class="footer-moon"></span>
+<span class="footer-shoot"></span>
+</div>
+<div class="footer-body reveal">
+<div class="footer-orion constellation">
 <svg viewBox="0 0 150 46" xmlns="http://www.w3.org/2000/svg">
-<path d="M30 26 L75 26 L120 26 M75 26 L75 40" stroke="#E4CFA0"/>
+<path d="M30 26 L75 26 L120 26 M75 26 L75 40"/>
 <circle cx="30" cy="26" r="2.4" fill="#E4CFA0"/>
 <circle cx="75" cy="26" r="2.4" fill="#E4CFA0"/>
 <circle cx="120" cy="26" r="2.4" fill="#E4CFA0"/>
@@ -2041,11 +2563,15 @@ body.music-ready .music-btn{opacity:1;visibility:visible;pointer-events:auto;}
 <circle cx="95" cy="8" r="2.2" fill="#E4CFA0"/>
 </svg>
 </div>
-<p class="constellation-label">Rasi Orion &middot; Sang Pemburu</p>
-<h2 class="footer-names reveal">Kanaya<span class="amp">&amp;</span>Alvaro</h2>
-<p class="footer-msg reveal">Merupakan suatu kehormatan bagi kami apabila Bapak/Ibu/Saudara/i berkenan hadir dan memberikan doa restu.</p>
-<p class="footer-msg reveal">Terima kasih atas doa dan restunya.</p>
-<p class="footer-credit reveal">Dibuat dengan cinta &mdash; 2026</p>
+<p class="footer-constellation-tag">Rasi Orion &middot; Sang Pemburu</p>
+<div class="footer-monogram" aria-hidden="true"><span>K</span><i></i><span>A</span></div>
+<h2 class="footer-couple">Kanaya <span class="amp">&amp;</span> Alvaro</h2>
+<p class="footer-date">Minggu &middot; 8 November 2026</p>
+<p class="footer-closing">Terima kasih atas kehadiran, doa, dan restu Bapak/Ibu/Saudara/i.</p>
+<div class="footer-startrail" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
+<p class="footer-sign">Semoga Allah SWT senantiasa melimpahkan berkah</p>
+<p class="footer-year">K &amp; A &middot; 2026</p>
+</div>
 </footer>
 
 </div>
@@ -2590,7 +3116,7 @@ wishes.push({name:name,msg:msg+(confirm==='Tidak Hadir' ? ' (Tidak dapat hadir)'
 saveWishes(); renderWishes(); showAppToast('Ucapan terkirim'); this.reset();
 });
 
-const revealEls = document.querySelectorAll('.reveal,.reveal-scale,.constellation');
+const revealEls = document.querySelectorAll('.reveal,.reveal-scale,.constellation,.hero-garland,.flourish');
 const revealObserver = new IntersectionObserver(function(entries){
 entries.forEach(function(entry){
 if(entry.isIntersecting){ entry.target.classList.add('active'); revealObserver.unobserve(entry.target); }
