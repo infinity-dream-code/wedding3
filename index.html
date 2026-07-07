@@ -280,8 +280,6 @@ transform:translate(-50%,-50%) scale(0) !important;
 filter:none !important;
 transition:opacity 0.1s ease,visibility 0.1s ease,transform 0.1s ease;
 }
-#cover.flash-hit .asteroid-img,
-#cover.is-clearing .asteroid-img,
 #cover.flash-hit .meteor-body,
 #cover.is-clearing .meteor-body,
 #cover.flash-hit .meteor-trail,
@@ -296,9 +294,6 @@ box-shadow:none !important;
 filter:none !important;
 opacity:0 !important;
 visibility:hidden !important;
-}
-#cover.flash-hit .asteroid-hotspot{
-display:none !important;
 }
 @keyframes revealWash{
 0%{opacity:0;transform:translate(-50%,-50%) scale(0);}
@@ -315,29 +310,49 @@ display:none !important;
 .cover-stars{position:absolute;inset:0;z-index:0;pointer-events:none;}
 .shooting-star{
 position:absolute;
-width:2px;height:2px;
+left:0;
+width:3px;height:3px;
 background:var(--cream);
 border-radius:50%;
-box-shadow:0 0 6px 1px rgba(247,241,228,0.8);
-opacity:0;
+box-shadow:0 0 8px 2px rgba(247,241,228,0.8);
+opacity:1;
 z-index:1;
-animation:shootAcross 7s linear infinite;
+pointer-events:none;
+will-change:transform;
 }
-.shooting-star::before{
+.shooting-star::after{
 content:'';
 position:absolute;
 top:50%;
-right:0;
-width:76px;
 height:1px;
-background:linear-gradient(90deg,transparent,rgba(247,241,228,0.85));
 transform:translateY(-50%);
+pointer-events:none;
 }
-@keyframes shootAcross{
-0%{transform:translate(0,0) rotate(28deg);opacity:0;}
-4%{opacity:1;}
-16%{opacity:0;}
-100%{transform:translate(-230px,140px) rotate(28deg);opacity:0;}
+.shooting-star--rtl{
+animation:shootRTL 5.2s linear infinite;
+animation-fill-mode:backwards;
+}
+.shooting-star--ltr{
+animation:shootLTR 5.8s linear infinite;
+animation-fill-mode:backwards;
+}
+.shooting-star--rtl::after{
+left:3px;
+width:96px;
+background:linear-gradient(to right,rgba(255,248,238,0.95),rgba(228,207,160,0.42),transparent);
+}
+.shooting-star--ltr::after{
+right:3px;
+width:96px;
+background:linear-gradient(to left,rgba(255,248,238,0.95),rgba(228,207,160,0.42),transparent);
+}
+@keyframes shootRTL{
+0%{transform:translate3d(calc(100vw + 7rem),0,0);}
+100%{transform:translate3d(calc(-7rem),0,0);}
+}
+@keyframes shootLTR{
+0%{transform:translate3d(calc(-7rem),0,0);}
+100%{transform:translate3d(calc(100vw + 7rem),0,0);}
 }
 .cover-moon{
 position:absolute;
@@ -834,7 +849,7 @@ position:relative;
 z-index:2;
 width:calc(100% + 40px);
 margin:0 -20px 22px;
-padding:34px 28px 36px;
+padding:52px 28px 40px;
 text-align:center;
 }
 .story-head::before{
@@ -874,41 +889,15 @@ text-shadow:0 2px 18px rgba(0,0,0,0.4);
 .story-tagline{
 font-style:italic;
 font-size:0.98rem;
-color:rgba(247,241,228,0.82);
+color:rgba(247,241,228,0.88);
 line-height:1.75;
 max-width:300px;
 margin:0 auto;
+text-shadow:0 0 10px rgba(228,207,160,0.5),0 0 22px rgba(203,163,92,0.28),0 1px 8px rgba(0,0,0,0.25);
 }
-.story-map{
-max-width:300px;
-margin:0 auto 34px;
-position:relative;
-z-index:2;
-}
-.story-arc-svg{
-width:100%;
-height:auto;
-display:block;
-}
-.story-arc-line{
-stroke:rgba(203,163,92,0.38);
-stroke-width:1;
-fill:none;
-stroke-dasharray:320;
-stroke-dashoffset:320;
-transition:stroke-dashoffset 2s cubic-bezier(.2,.8,.2,1);
-}
-.story-map.reveal.active .story-arc-line{stroke-dashoffset:0;}
-.map-star{
-fill:var(--gold-soft);
-opacity:0;
-transition:opacity 0.5s ease 1.2s;
-}
-.story-map.reveal.active .map-star{opacity:0.75;}
-.story-map.reveal.active .map-star--end{opacity:1;}
 .story-chapters{
 max-width:320px;
-margin:0 auto;
+margin:24px auto 0;
 position:relative;
 z-index:2;
 padding:0 4px;
@@ -921,8 +910,7 @@ border-left:1px solid rgba(203,163,92,0.16);
 margin-left:10px;
 }
 .story-chapter h3,
-.story-chapter p,
-.story-chapter .chapter-year{
+.story-chapter p{
 text-shadow:0 1px 12px rgba(15,21,38,0.9),0 0 20px rgba(27,36,64,0.7);
 }
 .story-chapter:last-child{
@@ -959,8 +947,9 @@ display:inline-block;
 font-family:'Cinzel',serif;
 font-size:0.68rem;
 letter-spacing:2.5px;
-color:var(--rose);
+color:var(--gold-soft);
 margin-bottom:8px;
+text-shadow:0 0 10px rgba(228,207,160,0.52),0 0 20px rgba(203,163,92,0.3),0 1px 8px rgba(0,0,0,0.22);
 }
 .story-chapter h3{
 font-family:'EB Garamond',serif;
@@ -1335,7 +1324,6 @@ transition:all 0.3s ease;
 }
 .event-action-btn:hover{background:var(--gold-soft);color:var(--night-deep);}
 #story .story-head,
-#story .story-map,
 #story .story-chapters{
 position:relative;
 z-index:2;
@@ -2138,7 +2126,7 @@ inset:8px 0 calc(4px + env(safe-area-inset-bottom,0px)) 0;
 .hero-quote{font-size:0.96rem;line-height:1.7;}
 .scroll-hint{padding-bottom:calc(70px + env(safe-area-inset-bottom,0px));}
 #story{padding-top:0;}
-.story-head{padding-top:30px;}
+.story-head{padding-top:46px;}
 }
 @media(max-height:740px){
 .hero-inner{padding-top:clamp(140px,24vh,180px);}
@@ -2158,9 +2146,10 @@ inset:8px 0 calc(4px + env(safe-area-inset-bottom,0px)) 0;
 <div class="cover-reveal-light" aria-hidden="true"></div>
 <div class="cover-flash" aria-hidden="true"></div>
 <div class="cover-stars" id="coverStars"></div>
-<div class="shooting-star" style="top:14%;left:78%;animation-delay:0s;"></div>
-<div class="shooting-star" style="top:30%;left:58%;animation-delay:3.4s;"></div>
-<div class="shooting-star" style="top:9%;left:34%;animation-delay:5.8s;"></div>
+<div class="shooting-star shooting-star--rtl" style="top:14%;animation-delay:0s;"></div>
+<div class="shooting-star shooting-star--ltr" style="top:31%;animation-delay:2.6s;"></div>
+<div class="shooting-star shooting-star--rtl" style="top:8%;animation-delay:4.8s;"></div>
+<div class="shooting-star shooting-star--ltr" style="top:22%;animation-delay:7.1s;"></div>
 <div class="cover-moon">
 <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
 <defs>
@@ -2373,15 +2362,6 @@ inset:8px 0 calc(4px + env(safe-area-inset-bottom,0px)) 0;
 <p class="eyebrow">Our Story</p>
 <h2 class="italic story-title">Perjalanan Kami</h2>
 <p class="story-tagline">Setiap bintang adalah bab dalam kisah kami menuju pelaminan.</p>
-</div>
-<div class="story-map reveal" aria-hidden="true">
-<svg class="story-arc-svg" viewBox="0 0 300 72" xmlns="http://www.w3.org/2000/svg">
-<path class="story-arc-line" d="M18 54 Q90 8 150 18 T282 54"/>
-<circle class="map-star" cx="18" cy="54" r="3.5"/>
-<circle class="map-star" cx="98" cy="14" r="3.5"/>
-<circle class="map-star" cx="198" cy="14" r="3.5"/>
-<circle class="map-star map-star--end" cx="282" cy="54" r="4.5"/>
-</svg>
 </div>
 <div class="story-chapters">
 <article class="story-chapter reveal">
