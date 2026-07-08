@@ -316,7 +316,7 @@ background:var(--cream);
 border-radius:50%;
 box-shadow:0 0 8px 2px rgba(247,241,228,0.8);
 opacity:1;
-z-index:1;
+z-index:3;
 pointer-events:none;
 will-change:transform;
 }
@@ -353,6 +353,12 @@ background:linear-gradient(to left,rgba(255,248,238,0.95),rgba(228,207,160,0.42)
 @keyframes shootLTR{
 0%{transform:translate3d(calc(-7rem),0,0);}
 100%{transform:translate3d(calc(100vw + 7rem),0,0);}
+}
+#cover.open .shooting-star{
+opacity:0;
+visibility:hidden;
+animation:none;
+transition:opacity 0.25s ease,visibility 0.25s ease;
 }
 .cover-moon{
 position:absolute;
@@ -497,12 +503,12 @@ background:radial-gradient(ellipse at 50% 100%,rgba(255,240,180,0.8),transparent
 filter:blur(3px);
 }
 #cover.open .meteor-trail{
-animation:trailPulse 2.15s cubic-bezier(.35,0,.15,1) 0.05s forwards;
+animation:trailPulse 0.55s cubic-bezier(.4,0,.2,1) 1.12s forwards;
 }
 @keyframes trailPulse{
-0%{opacity:0;transform:translateX(-50%) scaleY(0.15) scaleX(0.5);}
-20%{opacity:0.75;}
-100%{opacity:0.55;transform:translateX(-50%) scaleY(1) scaleX(1);}
+0%{opacity:0;transform:translateX(-50%) scaleY(0.08) scaleX(0.35);}
+45%{opacity:0.9;}
+100%{opacity:0.65;transform:translateX(-50%) scaleY(1) scaleX(1);}
 }
 .asteroid-wrap{
 position:absolute;
@@ -519,23 +525,27 @@ animation:asteroidApproach 2.15s cubic-bezier(.32,0,.12,1) 0.08s forwards;
 }
 @keyframes asteroidApproach{
 0%{
-transform:translate(-50%,-52%) scale(0.05) rotate(-18deg);
+transform:translate(-50%,-60%) scale(0.03) rotate(-18deg);
 opacity:0;
-filter:blur(3px) brightness(1.1);
+filter:blur(3px) brightness(1.04);
 }
-10%{opacity:1;}
-55%{
-transform:translate(-50%,18vh) scale(0.95) rotate(8deg);
+4%{opacity:1;}
+48%{
+transform:translate(-50%,0vh) scale(0.36) rotate(-6deg);
+filter:blur(1px) brightness(1.05);
+}
+62%{
+transform:translate(-50%,30vh) scale(1.75) rotate(20deg);
 filter:blur(0) brightness(1.1);
 }
-78%{
-transform:translate(-50%,32vh) scale(1.6) rotate(22deg);
-filter:blur(0) brightness(1.15);
+76%{
+transform:translate(-50%,38vh) scale(2.35) rotate(30deg);
+filter:blur(0) brightness(1.16);
 }
 100%{
-transform:translate(-50%,38vh) scale(2.4) rotate(32deg);
+transform:translate(-50%,44vh) scale(2.7) rotate(38deg);
 opacity:1;
-filter:blur(0) brightness(1.2);
+filter:blur(0) brightness(1.22);
 }
 }
 .meteor-fire-back{
@@ -550,7 +560,7 @@ radial-gradient(circle at 50% 55%,rgba(255,140,40,0.28) 0%,rgba(255,70,10,0.14) 
 filter:blur(8px);
 }
 #cover.open .meteor-fire-back{
-animation:fireGrow 2.15s ease 0.1s forwards,firePulse 0.42s ease-in-out 0.5s infinite alternate;
+animation:fireGrow 0.5s ease 1.15s forwards,firePulse 0.42s ease-in-out 1.55s infinite alternate;
 }
 .meteor-fire-front{
 position:absolute;
@@ -563,13 +573,12 @@ radial-gradient(circle at 50% 60%,transparent 0%,transparent 42%,rgba(255,180,70
 filter:blur(4px);
 }
 #cover.open .meteor-fire-front{
-animation:fireGrow 2.15s ease 0.15s forwards,flameFlicker 0.32s ease-in-out 0.5s infinite alternate;
+animation:fireGrow 0.48s ease 1.18s forwards,flameFlicker 0.32s ease-in-out 1.58s infinite alternate;
 }
 @keyframes fireGrow{
-0%{opacity:0;transform:scale(0.4);}
-35%{opacity:0.35;}
-70%{opacity:0.55;transform:scale(1.02);}
-100%{opacity:0.65;transform:scale(1.08);}
+0%{opacity:0;transform:scale(0.45);}
+55%{opacity:0.45;}
+100%{opacity:0.72;transform:scale(1.1);}
 }
 @keyframes firePulse{
 0%{filter:blur(6px);transform:scale(0.97);}
@@ -585,7 +594,15 @@ z-index:4;
 width:100%;
 height:100%;
 display:block;
-filter:drop-shadow(0 0 14px rgba(255,120,30,0.4)) drop-shadow(0 8px 18px rgba(0,0,0,0.65));
+filter:drop-shadow(0 8px 18px rgba(0,0,0,0.65));
+}
+#cover.open .meteor-body{
+animation:meteorRockGlow 2.15s cubic-bezier(.32,0,.12,1) 0.08s forwards;
+}
+@keyframes meteorRockGlow{
+0%,50%{filter:drop-shadow(0 8px 18px rgba(0,0,0,0.65));}
+68%{filter:drop-shadow(0 0 10px rgba(255,120,30,0.25)) drop-shadow(0 8px 18px rgba(0,0,0,0.6));}
+100%{filter:drop-shadow(0 0 22px rgba(255,140,40,0.65)) drop-shadow(0 8px 16px rgba(0,0,0,0.55));}
 }
 .meteor-body path.rock-main{
 stroke:#1e1a17;
@@ -611,11 +628,11 @@ radial-gradient(circle at 48% 38%,rgba(255,200,120,0.14),transparent 42%),
 radial-gradient(circle at 62% 55%,rgba(255,160,80,0.1),transparent 36%);
 }
 #cover.open .asteroid-dust{
-animation:dustRise 2.1s ease 0.4s forwards;
+animation:dustRise 0.65s ease 1.1s forwards;
 }
 @keyframes dustRise{
 0%{opacity:0;}
-30%{opacity:0.7;}
+40%{opacity:0.75;}
 100%{opacity:0;}
 }
 #cover.is-clearing{
@@ -1559,9 +1576,10 @@ animation:giftSparkle 4.5s ease-in-out infinite;
 .gift-panel{
 position:relative;
 z-index:2;
-max-width:360px;
+width:min(460px,94vw);
+max-width:460px;
 margin:0 auto;
-padding:20px 22px 28px;
+padding:20px 18px 28px;
 border:1px solid rgba(203,163,92,0.3);
 border-radius:18px;
 background:rgba(27,36,64,0.52);
@@ -1673,6 +1691,8 @@ border-color:var(--gold-soft);
 box-shadow:0 0 20px rgba(203,163,92,0.15);
 }
 .bank-list{
+width:100%;
+align-self:stretch;
 max-height:0;
 overflow:hidden;
 transition:max-height 0.55s cubic-bezier(.4,0,.2,1);
@@ -1682,6 +1702,8 @@ z-index:1;
 .bank-list.open{max-height:520px;margin-top:22px;}
 .bank-card{
 position:relative;
+width:100%;
+box-sizing:border-box;
 background:rgba(15,21,38,0.55);
 border:1px solid rgba(203,163,92,0.28);
 border-radius:12px;
@@ -1757,12 +1779,16 @@ padding-top:12px;
 border-top:1px solid rgba(203,163,92,0.15);
 }
 .bank-card .acc-num{
+flex:1;
+min-width:0;
 font-family:'Jost',sans-serif;
-font-size:0.95rem;
-letter-spacing:1.5px;
+font-size:clamp(0.84rem,3.4vw,0.95rem);
+letter-spacing:1px;
 color:var(--gold-soft);
+word-break:break-all;
 }
 .copy-btn{
+flex-shrink:0;
 background:transparent;
 color:var(--gold-soft);
 padding:8px 14px;
@@ -2941,7 +2967,8 @@ if(ts-last<36){rafId=requestAnimationFrame(tick);return;}
 last=ts;
 const prog=Math.min(1,(ts-t0)/2150);
 if(prog>=0.92){active=false;return;}
-const heat=1-Math.pow(1-prog,2.45);
+const heat=prog<0.52?0:Math.pow((prog-0.52)/0.4,1.65);
+if(heat<=0.01){rafId=requestAnimationFrame(tick);return;}
 for(let i=0;i<3+heat*5;i++) spawnSpark(heat);
 renderSparks(0.5+heat*0.5);
 rafId=requestAnimationFrame(tick);
